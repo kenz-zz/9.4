@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal 9.4 Generator</title>
+    <title>Jadwal & PR Generator</title>
     <style>
+        /* Base Styling - KidsTube Dark Mode Style */
         * {
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -188,7 +189,38 @@
             border-radius: 10px;
         }
 
-        /* Area Result (Dipertahankan sesuai gaya sc1) */
+        /* Daftar PR Aktif Component */
+        .pr-active-list {
+            margin-top: 14px;
+            background-color: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+        .pr-active-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #282828;
+            font-size: 0.85rem;
+        }
+        .pr-active-item:last-child { border-bottom: none; }
+        .pr-item-title { font-weight: 600; color: #ff4e4e; }
+        .pr-item-desc { color: #aaa; margin-left: 6px; font-weight: normal; }
+        .btn-del-single-pr {
+            background-color: #2a1a1a;
+            color: #ff4e4e;
+            border: 1px solid #4a2222;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            width: auto;
+            margin-top: 0;
+        }
+
+        /* Area Result */
         .copy-area {
             background-color: #1a1a1a;
             border: 1px solid #555;
@@ -204,7 +236,7 @@
         }
         textarea#hasilJadwal {
             height: 450px;
-            font-family: monospace; /* Monospace khas sc1 agar layout rapi */
+            font-family: monospace;
             white-space: pre;
             background-color: #121212;
             border: none;
@@ -214,7 +246,7 @@
             resize: vertical;
         }
 
-        /* TOP NOTIFICATION (POPUP NOTIF DI ATAS LAYAR) */
+        /* TOP NOTIFICATION */
         .top-toast {
             position: fixed;
             top: -100px;
@@ -234,20 +266,11 @@
             max-width: 90%;
             width: max-content;
         }
-        .top-toast.show {
-            top: 20px;
-        }
-        .top-toast-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #ff4e4e;
-        }
-        .top-toast-desc {
-            font-size: 0.88rem;
-            color: #ddd;
-        }
+        .top-toast.show { top: 20px; }
+        .top-toast-title { font-weight: 600; font-size: 0.95rem; color: #ff4e4e; }
+        .top-toast-desc { font-size: 0.88rem; color: #ddd; }
 
-        /* WARNING POPUP MODAL (POPUP PERINGATAN DI TENGAH LAYAR) */
+        /* WARNING POPUP MODAL */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -260,10 +283,7 @@
             pointer-events: none;
             transition: opacity 0.2s;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-content {
             background-color: #212121;
             padding: 22px;
@@ -280,24 +300,10 @@
         .modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
         .modal-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; line-height: 1.4; }
         
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .modal-buttons button {
-            margin-top: 0;
-            padding: 10px 16px;
-            border-radius: 14px;
-        }
-        .btn-cancel {
-            background-color: #272727;
-            color: #fff;
-            border: 1px solid #444;
-        }
-        .btn-confirm {
-            background-color: #ff0000;
-            color: #fff;
-        }
+        .modal-buttons { display: flex; gap: 10px; }
+        .modal-buttons button { margin-top: 0; padding: 10px 16px; border-radius: 14px; }
+        .btn-cancel { background-color: #272727; color: #fff; border: 1px solid #444; }
+        .btn-confirm { background-color: #ff0000; color: #fff; }
     </style>
 </head>
 <body>
@@ -337,13 +343,18 @@
         <label for="isiPR">Detail PR/Tugas:</label>
         <textarea id="isiPR" rows="3" placeholder="Contoh: selesaikan modul halaman 7..."></textarea>
         <button onclick="simpanPR()">Simpan PR</button>
+
+        <!-- FITUR BARU: DAFTAR PR AKTIF & HAPUS INDIVIDUAL -->
+        <label style="margin-top: 18px;">📌 PR yang Sedang Aktif:</label>
+        <div class="pr-active-list" id="prActiveList">
+            <div style="font-size: 0.85rem; color: #777; text-align: center;">Belum ada PR tersimpan</div>
+        </div>
     </div>
 
     <!-- Container Generate -->
     <div class="container">
         <h2>⚙️ Persiapan Jadwal Besok</h2>
         
-        <!-- Diperbaiki: 4 Checklist dikembalikan sesuai SC1 -->
         <label>Template Info Cepat (Pilih >1):</label>
         <div class="info-checkbox-group">
             <label class="checkbox-container">
@@ -373,7 +384,7 @@
         <button type="button" class="btn-add-info" onclick="tambahInputInfo()">+ Tambah Info Manual</button>
         
         <button onclick="generateJadwal()">Buat Jadwal Besok</button>
-        <button onclick="konfirmasiHapusPR()" class="btn-danger">Hapus Semua Data PR</button>
+        <button onclick="konfirmasiHapusPR()" class="btn-danger">Hapus SEMUA Data PR</button>
         
         <div class="copy-area">
             <h3>📋 Halaman Hasil Jadwal</h3>
@@ -394,7 +405,7 @@
         <button onclick="importSyncKode()" class="btn-outline">Impor Data</button>
     </div>
 
-    <!-- WARNING MODAL (POPUP PERINGATAN DI TENGAH) -->
+    <!-- WARNING MODAL -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
             <div class="modal-title" id="confirmTitle">Peringatan!</div>
@@ -407,69 +418,51 @@
     </div>
 
     <script>
-        /* LOGIC DROPDOWN */
+        /* DROPDOWN LOGIC */
         const dropdownOptions = document.getElementById('optionsPR');
         const selectedMapelText = document.getElementById('selectedMapel');
         let currentSelectedMapel = "B. Indonesia";
 
-        function toggleDropdown() {
-            dropdownOptions.classList.toggle('show');
-        }
-
+        function toggleDropdown() { dropdownOptions.classList.toggle('show'); }
         function selectOption(value) {
             currentSelectedMapel = value;
             selectedMapelText.innerText = value;
             dropdownOptions.classList.remove('show');
         }
-
-        window.onclick = function(event) {
-            if (!event.target.closest('.custom-select-wrapper')) {
-                dropdownOptions.classList.remove('show');
-            }
+        window.onclick = function(e) {
+            if (!e.target.closest('.custom-select-wrapper')) dropdownOptions.classList.remove('show');
         }
 
-        /* NOTIFIKASI POPUP DI ATAS LAYAR (TOAST) */
+        /* NOTIFIKASI TOAST */
         let toastTimer = null;
         function showNotification(title, desc) {
             const toast = document.getElementById('topToast');
             document.getElementById('toastTitle').innerText = title;
             document.getElementById('toastDesc').innerText = desc;
-            
             toast.classList.add('show');
-            
             if (toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3500);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        /* POPUP PERINGATAN DI TENGAH LAYAR (CONFIRM MODAL) */
+        /* CONFIRM MODAL */
         let pendingAction = null;
-
         function showConfirmModal(title, desc, onConfirm) {
             document.getElementById('confirmTitle').innerText = title;
             document.getElementById('confirmDesc').innerText = desc;
             pendingAction = onConfirm;
             document.getElementById('confirmModal').classList.add('active');
         }
-
         function tutupModalPeringatan(isConfirmed) {
             document.getElementById('confirmModal').classList.remove('active');
-            if (isConfirmed && typeof pendingAction === 'function') {
-                pendingAction();
-            } else if (!isConfirmed) {
-                showNotification("Dibatalkan", "Aksi penghapusan telah dibatalkan.");
-            }
+            if (isConfirmed && typeof pendingAction === 'function') pendingAction();
             pendingAction = null;
         }
 
-        /* KELOLA INPUT INFO DINAMIS (MINIMAL/DAPAT LEBIH DARI 5) */
+        /* INPUT INFO DINAMIS */
         let infoInputCount = 1;
-
         function tambahInputInfo() {
             infoInputCount++;
             const container = document.getElementById('infoInputsContainer');
-            
             const wrapper = document.createElement('div');
             wrapper.className = 'info-input-wrapper';
             
@@ -482,16 +475,14 @@
             btnRemove.type = 'button';
             btnRemove.className = 'btn-remove-info';
             btnRemove.innerText = '✕';
-            btnRemove.onclick = function() {
-                container.removeChild(wrapper);
-            };
+            btnRemove.onclick = () => container.removeChild(wrapper);
 
             wrapper.appendChild(input);
             wrapper.appendChild(btnRemove);
             container.appendChild(wrapper);
         }
 
-        /* DATABASE JADWAL & ALIAS */
+        /* DATABASE JADWAL */
         const jadwalSekolah = {
             1: { hari: "Senin", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["PAI", "PAI", "PAI", "IPS", "```Istirahat```", "IPS", "B. Inggris", "B. Inggris"] },
             2: { hari: "Selasa", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["B. Indonesia", "B. Indonesia", "Pendidikan Pancasila", "```Istirahat```", "Pendidikan Pancasila", "SBK", "SBK"] },
@@ -506,6 +497,32 @@
             "Matematika": "MTK"
         };
 
+        /* RENDER DAFTAR PR AKTIF */
+        function renderActivePR() {
+            const dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
+            const listContainer = document.getElementById('prActiveList');
+            const keys = Object.keys(dataPR);
+
+            if (keys.length === 0) {
+                listContainer.innerHTML = `<div style="font-size: 0.85rem; color: #777; text-align: center;">Belum ada PR tersimpan</div>`;
+                return;
+            }
+
+            let html = '';
+            keys.forEach(mapel => {
+                html += `
+                    <div class="pr-active-item">
+                        <div>
+                            <span class="pr-item-title">${mapel}:</span>
+                            <span class="pr-item-desc">${dataPR[mapel]}</span>
+                        </div>
+                        <button class="btn-del-single-pr" onclick="hapusSatuPR('${mapel}')">✕ Hapus</button>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
         /* PR MANAGEMENT */
         function simpanPR() {
             const isi = document.getElementById('isiPR').value.trim();
@@ -518,17 +535,28 @@
             localStorage.setItem('dataPR', JSON.stringify(dataPR));
             
             updateSyncCode();
+            renderActivePR();
             showNotification("Berhasil!", "PR untuk " + currentSelectedMapel + " berhasil dicatat.");
             document.getElementById('isiPR').value = "";
+        }
+
+        function hapusSatuPR(mapel) {
+            let dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
+            delete dataPR[mapel];
+            localStorage.setItem('dataPR', JSON.stringify(dataPR));
+            updateSyncCode();
+            renderActivePR();
+            showNotification("Dihapus", `PR ${mapel} berhasil dihapus.`);
         }
 
         function konfirmasiHapusPR() {
             showConfirmModal(
                 "Konfirmasi Hapus Data",
-                "Apakah Anda yakin ingin menghapus semua data PR tersimpan?",
+                "Apakah Anda yakin ingin menghapus SELURUH data PR tersimpan?",
                 function() {
                     localStorage.removeItem('dataPR');
                     updateSyncCode();
+                    renderActivePR();
                     showNotification("Berhasil Dihapus!", "Semua data PR telah berhasil dibersihkan.");
                 }
             );
@@ -561,6 +589,7 @@
                 const decodedData = decodeURIComponent(atob(kode));
                 localStorage.setItem('dataPR', decodedData);
                 updateSyncCode();
+                renderActivePR();
                 document.getElementById('inputSyncKode').value = "";
                 showNotification("Berhasil!", "Data PR berhasil diimpor.");
             } catch (e) {
@@ -568,11 +597,9 @@
             }
         }
 
-        updateSyncCode();
-
-        /* KEMBALI MENGGUNAKAN LOGIKA WRAPTEXT SC1 YANG 100% RAPI */
+        /* LOGIKA WRAPTEXT */
         function wrapText(prefix, text) {
-            const maxLen = 28; // Diset 28 agar spasi template info (Tasaqur) turun presisi seperti SC1
+            const maxLen = 28;
             let fullText = prefix + text;
             const words = fullText.split(' ');
             let lines = [];
@@ -599,18 +626,15 @@
             return result.trimRight(); 
         }
 
-        /* GENERATE JADWAL */
+        /* GENERATE JADWAL + AUTO CLEAR PR HARI H */
         function generateJadwal() {
-            const dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
-            
+            let dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
             let listInfo = [];
             
-            // Ambil dari Checkbox Template
             document.querySelectorAll('.info-checkbox-group input:checked').forEach((cb) => {
                 listInfo.push(cb.value);
             });
             
-            // Ambil dari semua Input Manual Dinamis
             document.querySelectorAll('.manual-info-input').forEach(input => {
                 let val = input.value.trim();
                 if (val) listInfo.push(val);
@@ -630,7 +654,6 @@
             
             const dataJadwal = jadwalSekolah[hariIndex];
             
-            // Header Template
             let teks = `╭─────────────── ✰\n`;
             teks += `│ 🗓️ ${dataJadwal.hari}, ${formatTanggal}\n`;
             teks += `│ ⏰ ${dataJadwal.waktu}\n`;
@@ -654,9 +677,17 @@
                     adaPR = true;
                     let namaSingkat = aliasPR[m] || m; 
                     teks += wrapText(namaSingkat + " ", dataPR[m]) + "\n";
+                    
+                    // OTOMATIS HAPUS PR MAPEL BESOK SETELAH DIGENERATE
+                    delete dataPR[m];
                 }
             });
             if (!adaPR) teks += `│ • –\n`;
+
+            // Simpan pembaruan data PR setelah auto-clear
+            localStorage.setItem('dataPR', JSON.stringify(dataPR));
+            updateSyncCode();
+            renderActivePR();
 
             // Info Section
             teks += `├─────────────── ✰\n`;
@@ -671,7 +702,7 @@
             teks += `╰─────────────── ✰`;
 
             document.getElementById('hasilJadwal').value = teks;
-            showNotification("Jadwal Siap!", "Jadwal berhasil digenerate.");
+            showNotification("Jadwal Siap!", "Jadwal digenerate & PR besok otomatis terarsip.");
         }
 
         /* COPY FUNCTION */
@@ -685,6 +716,10 @@
             document.execCommand('copy');
             showNotification("Disalin!", "Teks jadwal berhasil disalin ke clipboard.");
         }
+
+        // Initial setup
+        updateSyncCode();
+        renderActivePR();
     </script>
 </body>
 </html>
