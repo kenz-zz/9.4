@@ -525,9 +525,9 @@
     <!-- MODAL PANEL DAFTAR PR -->
     <div class="modal-overlay" id="prModal">
         <div class="modal-content" style="max-width: 420px;">
-            <div class="modal-title"><iconify-icon icon="mdi:clipboard-list"></iconify-icon> Daftar PR Tersimpan</div>
+            <div class="modal-title"><iconify-icon icon="mdi:clipboard-list"></iconify-icon> Daftar PR</div>
             <div class="pr-active-list" id="prModalList"></div>
-            <button class="btn-outline" onclick="tutupModalPR()">Tutup Panel</button>
+            <button class="btn-outline" onclick="tutupModalPR()">Tutup</button>
         </div>
     </div>
 
@@ -741,8 +741,7 @@
         function konfirmasiHapusSemuaPR() {
             showConfirmModal(
                 "Konfirmasi Penghapusan",
-                "Apakah Anda yakin ingin menghapus SELURUH data PR tersimpan?",
-                function() {
+                "Apakah Anda yakin ingin menghapus 'SEMUA' data PR tersimpan?",                function() {
                     localStorage.removeItem('dataPR');
                     updateSyncCode();
                     showNotification("Bersih!", "Semua data PR telah berhasil dihapus.");
