@@ -3,164 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Jadwal & PR</title>
+    <title>Jadwal & PR Generator</title>
     <style>
-        /* Menggunakan font standar WhatsApp */
-        body {
+        /* Base Styling - KidsTube Dark Mode Style */
+        * {
+            box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+        }
+        body {
+            background-color: #0f0f0f;
+            color: #f1f1f1;
             margin: 0;
-            padding: 20px;
+            padding: 20px 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         .container {
             background-color: #1e1e1e;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 25px;
-            box-sizing: border-box;
-            border: 1px solid #333;
+            max-width: 480px;
+            border: 1px solid #2d2d2d;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
         }
-        h2 { margin-top: 0; font-size: 1.3rem; color: #ffffff; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.95rem; color: #b3b3b3; }
-        
-        /* Input & Textarea */
+        h2 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            color: #ffffff;
+            border-bottom: 1px solid #2d2d2d;
+            padding-bottom: 12px;
+            font-weight: 600;
+        }
+        label {
+            display: block;
+            margin-top: 14px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Inputs & Buttons */
         textarea, input[type="text"] {
             width: 100%;
             padding: 12px;
-            margin-top: 8px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background-color: #2a2a2a;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background-color: #272727;
             color: #fff;
-            box-sizing: border-box;
-            font-family: inherit;
             font-size: 0.95rem;
-            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
         }
         textarea:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: #777;
+            border-color: #ff0000;
         }
 
-        /* Buttons (Desain Netral/Bersih) */
         button {
             width: 100%;
             padding: 12px;
-            margin-top: 20px;
-            border-radius: 8px;
+            margin-top: 16px;
+            border-radius: 20px;
             border: none;
-            background-color: #e0e0e0;
-            color: #121212;
-            font-weight: bold;
-            font-size: 1rem;
+            background-color: #f1f1f1;
+            color: #0f0f0f;
+            font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: 0.2s;
-            font-family: inherit;
+            transition: opacity 0.2s;
         }
-        button:hover { background-color: #ffffff; }
+        button:hover { opacity: 0.9; }
+        
         .btn-outline {
             background-color: transparent;
-            border: 1px solid #e0e0e0;
-            color: #e0e0e0;
+            border: 1px solid #333;
+            color: #f1f1f1;
         }
-        .btn-outline:hover { background-color: #333; color: #fff; }
-        .btn-danger { background-color: #ff5252; color: #fff; border: none; }
-        .btn-danger:hover { background-color: #ff7676; }
+        .btn-outline:hover { background-color: #272727; }
+
+        .btn-danger {
+            background-color: #272727;
+            color: #ff4e4e;
+            border: 1px solid #3a1c1c;
+        }
+        .btn-danger:hover { background-color: #3a1c1c; }
 
         /* Custom Dropdown UI */
         .custom-select-wrapper {
             position: relative;
             user-select: none;
-            margin-top: 8px;
+            margin-top: 6px;
         }
         .custom-select {
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
+            background-color: #272727;
+            border: 1px solid #333;
+            border-radius: 10px;
             padding: 12px;
             color: #fff;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 0.95rem;
         }
         .custom-options {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            margin-top: 5px;
-            z-index: 10;
+            background-color: #272727;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-top: 6px;
+            z-index: 50;
             display: none;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.8);
         }
         .custom-options.show { display: block; }
         .custom-option {
             padding: 12px;
             cursor: pointer;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #1f1f1f;
+            font-size: 0.9rem;
         }
         .custom-option:last-child { border-bottom: none; }
-        .custom-option:hover { background-color: #444; }
+        .custom-option:hover { background-color: #383838; }
 
-        /* Checkbox Info Templates */
+        /* Checkbox Info */
         .info-checkbox-group {
-            margin-top: 10px;
-            background-color: #2a2a2a;
-            border-radius: 8px;
-            padding: 10px;
-            border: 1px solid #444;
+            margin-top: 8px;
+            background-color: #272727;
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #333;
         }
         .checkbox-container {
             display: flex;
             align-items: flex-start;
             margin-bottom: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
-            color: #ccc;
+            font-size: 0.88rem;
+            color: #ddd;
+            line-height: 1.4;
         }
         .checkbox-container:last-child { margin-bottom: 0; }
         .checkbox-container input {
             margin-right: 10px;
-            margin-top: 3px;
+            margin-top: 2px;
+            accent-color: #ff0000;
             cursor: pointer;
         }
 
-        /* Area Hasil */
+        /* Area Result */
         .copy-area {
-            background-color: #1a1a1a;
-            border: 1px solid #555;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 25px;
+            background-color: #181818;
+            border: 1px solid #2d2d2d;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 20px;
         }
-        .copy-area h3 { margin: 0 0 10px 0; color: #fff; font-size: 1.1rem; text-align: center; }
+        .copy-area h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+        }
         textarea#hasilJadwal {
-            height: 450px;
-            font-family: monospace; /* Tetap monospace agar susunan template rapi saat di copy */
+            height: 420px;
+            background-color: #0f0f0f;
+            border: 1px solid #272727;
+            color: #25d366; /* WhatsApp Accent Green */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.35;
             white-space: pre;
-            background-color: #121212;
-            border: none;
-            color: #d4d4d4;
+            resize: none;
         }
 
-        /* Custom Modal / Popup UI */
+        /* Custom Popup UI */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -174,35 +203,34 @@
             pointer-events: all;
         }
         .modal-content {
-            background-color: #222;
-            padding: 25px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
+            background-color: #212121;
+            padding: 22px;
+            border-radius: 16px;
+            width: 88%;
+            max-width: 380px;
             text-align: center;
-            border: 1px solid #444;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            transform: translateY(-20px);
+            border: 1px solid #333;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.9);
+            transform: scale(0.9);
             transition: transform 0.2s;
         }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .modal-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 10px; }
-        .modal-desc { font-size: 0.95rem; color: #ccc; margin-bottom: 20px; line-height: 1.5; }
-        .modal-btn { background-color: #e0e0e0; color: #121212; width: auto; padding: 10px 30px; margin-top: 0; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
+        .modal-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 18px; line-height: 1.4; }
+        .modal-btn { background-color: #ff0000; color: #fff; width: auto; padding: 10px 28px; margin-top: 0; border-radius: 18px; }
     </style>
 </head>
 <body>
 
-    <!-- Container Pencatatan PR -->
+    <!-- Container PR -->
     <div class="container">
         <h2>📝 Catat PR Hari Ini</h2>
-        <label>Pilih Mata Pelajaran:</label>
+        <label>Pilih Pelajaran:</label>
         
-        <!-- Custom Dropdown UI -->
         <div class="custom-select-wrapper" id="dropdownPR">
             <div class="custom-select" onclick="toggleDropdown()">
                 <span id="selectedMapel">B. Indonesia</span>
-                <span>▼</span>
+                <span style="font-size: 0.8rem; color: #888;">▼</span>
             </div>
             <div class="custom-options" id="optionsPR">
                 <div class="custom-option" onclick="selectOption('PAI')">PAI</div>
@@ -225,69 +253,69 @@
         <button onclick="simpanPR()">Simpan PR</button>
     </div>
 
-    <!-- Container Generate Jadwal -->
+    <!-- Container Generate -->
     <div class="container">
         <h2>⚙️ Persiapan Jadwal Besok</h2>
         
-        <label>Template Info Cepat (Pilih bisa >1):</label>
+        <label>Template Info Cepat (Pilih >1):</label>
         <div class="info-checkbox-group">
             <label class="checkbox-container">
                 <input type="checkbox" value="Besok upacara! datang lebih awal.">
-                Info 1 (Upacara)
+                <span>1. Besok upacara! datang lebih awal.</span>
             </label>
             <label class="checkbox-container">
                 <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan sholat, dan infak seikhlasnya.">
-                Info 2 (Tasaqur)
+                <span>2. Tasaqur di lapangan + infak seikhlasnya</span>
             </label>
             <label class="checkbox-container">
                 <input type="checkbox" value="Mengingatkan kembali bahwa pelajaran SBK memerlukan penggaris.">
-                Info 3 (SBK Penggaris)
+                <span>3. Pelajaran SBK memerlukan penggaris</span>
             </label>
             <label class="checkbox-container">
                 <input type="checkbox" value="Besok kokurikuler senam di lapangan! datang lebih awal.">
-                Info 4 (Senam)
+                <span>4. Besok kokurikuler senam di lapangan</span>
             </label>
         </div>
 
-        <label for="infoBesok">Info Tambahan Manual (Opsional):</label>
-        <textarea id="infoBesok" rows="2" placeholder="Tulis info manual di sini jika ada..."></textarea>
+        <label for="infoBesok">Info Manual (Opsional):</label>
+        <textarea id="infoBesok" rows="2" placeholder="Tulis info manual tambahan di sini..."></textarea>
         
         <button onclick="generateJadwal()">Buat Jadwal Besok</button>
         <button onclick="hapusSemuaPR()" class="btn-danger">Hapus Semua Data PR</button>
         
         <div class="copy-area">
-            <h3>📋 Halaman Hasil Jadwal</h3>
+            <h3>📋 Hasil Jadwal</h3>
             <textarea id="hasilJadwal" readonly placeholder="Klik 'Buat Jadwal Besok' terlebih dahulu..."></textarea>
-            <button onclick="copyKeClipboard()">Copy Jadwal ke Clipboard</button>
+            <button onclick="copyKeClipboard()">Copy Hasil Teks</button>
         </div>
     </div>
 
-    <!-- Container Sync Data (Cross Device) -->
+    <!-- Container Sync -->
     <div class="container">
-        <h2>🔄 Sinkronisasi Data (Cross Device)</h2>
-        <label>Salin kode ini dan Paste di device lain untuk memindahkan data PR.</label>
-        <input type="text" id="syncKode" readonly placeholder="Kode Data PR Kosong">
+        <h2>🔄 Transfer Data Antar Perangkat</h2>
+        <label>Salin kode ini untuk dipindahkan ke HP/Laptop lain:</label>
+        <input type="text" id="syncKode" readonly placeholder="Kode Kosong">
         <button onclick="copySyncKode()" class="btn-outline">Copy Kode Data</button>
         
-        <label>Paste kode dari device lain ke sini:</label>
+        <label>Paste kode dari perangkat lain ke sini:</label>
         <input type="text" id="inputSyncKode" placeholder="Paste kode di sini...">
         <button onclick="importSyncKode()" class="btn-outline">Impor Data</button>
     </div>
 
-    <!-- Custom Modal / Popup -->
+    <!-- Custom Modal -->
     <div class="modal-overlay" id="customModal">
         <div class="modal-content">
             <div class="modal-title" id="modalTitle">Notifikasi</div>
-            <div class="modal-desc" id="modalDesc">Pesan ini adalah notifikasi.</div>
+            <div class="modal-desc" id="modalDesc">Pesan notifikasi</div>
             <button class="modal-btn" onclick="closeModal()">OK</button>
         </div>
     </div>
 
     <script>
-        /* MENGATUR UI CUSTOM DROPDOWN */
+        /* DROPDOWN LOGIC */
         const dropdownOptions = document.getElementById('optionsPR');
         const selectedMapelText = document.getElementById('selectedMapel');
-        let currentSelectedMapel = "B. Indonesia"; // Default
+        let currentSelectedMapel = "B. Indonesia";
 
         function toggleDropdown() {
             dropdownOptions.classList.toggle('show');
@@ -299,14 +327,13 @@
             dropdownOptions.classList.remove('show');
         }
 
-        // Tutup dropdown jika klik di luar
         window.onclick = function(event) {
             if (!event.target.closest('.custom-select-wrapper')) {
                 dropdownOptions.classList.remove('show');
             }
         }
 
-        /* MENGATUR CUSTOM MODAL (POPUP ALERT) */
+        /* MODAL LOGIC */
         function showModal(title, desc) {
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalDesc').innerText = desc;
@@ -316,7 +343,7 @@
             document.getElementById('customModal').classList.remove('active');
         }
 
-        /* DATABASE JADWAL & ALIAS (Singkatan PR) */
+        /* DATABASE JADWAL & ALIAS */
         const jadwalSekolah = {
             1: { hari: "Senin", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["PAI", "PAI", "PAI", "IPS", "```Istirahat```", "IPS", "B. Inggris", "B. Inggris"] },
             2: { hari: "Selasa", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["B. Indonesia", "B. Indonesia", "Pendidikan Pancasila", "```Istirahat```", "Pendidikan Pancasila", "SBK", "SBK"] },
@@ -331,32 +358,31 @@
             "Matematika": "MTK"
         };
 
-        /* FUNGSI PENYIMPANAN PR */
+        /* PR MANAGEMENT */
         function simpanPR() {
             const isi = document.getElementById('isiPR').value.trim();
             if (!isi) {
-                showModal("Gagal Menyimpan", "Isi detail tugas PR tidak boleh kosong!");
+                showModal("Gagal", "Isi tugas PR tidak boleh kosong!");
                 return;
             }
-            
             let dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
             dataPR[currentSelectedMapel] = isi;
             localStorage.setItem('dataPR', JSON.stringify(dataPR));
             
             updateSyncCode();
-            showModal("Berhasil!", "PR untuk " + currentSelectedMapel + " berhasil dicatat.");
-            document.getElementById('isiPR').value = ""; 
+            showModal("Tersimpan!", "PR " + currentSelectedMapel + " berhasil dicatat.");
+            document.getElementById('isiPR').value = "";
         }
 
         function hapusSemuaPR() {
-            if(confirm("Yakin ingin menghapus semua data PR minggu ini?")) {
+            if(confirm("Hapus semua data PR tersimpan?")) {
                 localStorage.removeItem('dataPR');
                 updateSyncCode();
-                showModal("Berhasil", "Semua data PR telah dibersihkan.");
+                showModal("Dibersihkan", "Semua data PR berhasil dihapus.");
             }
         }
 
-        /* FUNGSI SINKRONISASI (CROSS-DEVICE) */
+        /* SYNC MANAGEMENT */
         function updateSyncCode() {
             const dataStr = localStorage.getItem('dataPR');
             document.getElementById('syncKode').value = dataStr ? btoa(encodeURIComponent(dataStr)) : "";
@@ -370,13 +396,13 @@
             }
             input.select();
             document.execCommand('copy');
-            showModal("Disalin!", "Kode sinkronisasi berhasil disalin. Paste kode ini di device lainmu.");
+            showModal("Disalin!", "Kode transfer berhasil disalin.");
         }
 
         function importSyncKode() {
             const kode = document.getElementById('inputSyncKode').value.trim();
             if(!kode) {
-                showModal("Gagal Impor", "Kode tidak valid atau kosong.");
+                showModal("Gagal", "Masukkan kode terlebih dahulu.");
                 return;
             }
             try {
@@ -384,76 +410,90 @@
                 localStorage.setItem('dataPR', decodedData);
                 updateSyncCode();
                 document.getElementById('inputSyncKode').value = "";
-                showModal("Berhasil!", "Data PR dari device lain berhasil diimpor.");
+                showModal("Berhasil!", "Data PR berhasil diimpor.");
             } catch (e) {
-                showModal("Error", "Kode yang dimasukkan salah atau korup.");
+                showModal("Error", "Kode tidak valid.");
             }
         }
 
-        // Jalankan saat web dibuka
         updateSyncCode();
 
-        /* FUNGSI FORMAT TULISAN BATAS BINTANG ✰ */
-        function wrapText(prefix, text) {
-            const maxLen = 27; // Batas aman sebelum tembus bintang
-            let fullText = prefix + text;
-            const words = fullText.split(' ');
+        /* WORD WRAPPING LOGIC DENGAN TANDA HUBUNG (-) */
+        function wrapTextWithHyphen(prefix, text, maxLen = 26) {
+            let words = text.split(' ');
             let lines = [];
             let currentLine = '';
 
-            for (let word of words) {
-                if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLen) {
-                    if (currentLine) lines.push(currentLine);
-                    currentLine = word;
-                } else {
+            for (let i = 0; i < words.length; i++) {
+                let word = words[i];
+                
+                // Jika kata langsung muat
+                if ((currentLine ? currentLine + ' ' : '') + word.length <= maxLen) {
                     currentLine = currentLine ? currentLine + ' ' + word : word;
+                } else {
+                    let spaceLeft = maxLen - (currentLine ? currentLine.length + 1 : 0);
+                    
+                    // Jika tersisa space >= 4, potong kata dengan tanda hubung '-'
+                    if (spaceLeft >= 4 && word.length > spaceLeft && word.length > 4) {
+                        let part1 = word.slice(0, spaceLeft - 1) + '-';
+                        let part2 = word.slice(spaceLeft - 1);
+                        
+                        currentLine = currentLine ? currentLine + ' ' + part1 : part1;
+                        lines.push(currentLine);
+                        currentLine = part2;
+                    } else {
+                        if (currentLine) lines.push(currentLine);
+                        
+                        // Jika kata sangat panjang melebihi maxLen di baris baru
+                        while (word.length > maxLen) {
+                            let part1 = word.slice(0, maxLen - 1) + '-';
+                            word = word.slice(maxLen - 1);
+                            lines.push(part1);
+                        }
+                        currentLine = word;
+                    }
                 }
             }
             if (currentLine) lines.push(currentLine);
 
             let result = '';
-            for (let i = 0; i < lines.length; i++) {
-                if (i === 0) {
-                    result += `│ • ${lines[i]}\n`;
+            for (let k = 0; k < lines.length; k++) {
+                if (k === 0) {
+                    result += `│ • ${prefix}${lines[k]}\n`;
                 } else {
-                    result += `│    ${lines[i]}\n`;
+                    result += `│    ${lines[k]}\n`;
                 }
             }
-            return result.trimRight(); 
+            return result.trimRight();
         }
 
-        /* FUNGSI UTAMA MEMBUAT TEMPLATE JADWAL */
+        /* GENERATE TEMPLATE SAMA PERSIS DENGAN FORMAT ASLI */
         function generateJadwal() {
             const dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
             
-            // Mengambil Info dari Checkbox Template
             let listInfo = [];
-            document.querySelectorAll('.info-checkbox-group input:checked').forEach((checkbox) => {
-                listInfo.push(checkbox.value);
+            document.querySelectorAll('.info-checkbox-group input:checked').forEach((cb) => {
+                listInfo.push(cb.value);
             });
             
-            // Mengambil Info Manual
             const manualInfo = document.getElementById('infoBesok').value.trim();
-            if(manualInfo) {
-                listInfo.push(manualInfo);
-            }
+            if(manualInfo) listInfo.push(manualInfo);
 
             let besok = new Date();
             besok.setDate(besok.getDate() + 1);
             let hariIndex = besok.getDay(); 
             
             if (hariIndex === 0 || hariIndex === 6) {
-                showModal("Besok Libur", "Hari Sabtu/Minggu tidak ada jadwal pelajaran.");
+                showModal("Besok Libur", "Hari Sabtu dan Minggu tidak ada jadwal sekolah.");
                 return;
             }
 
-            // Nama bulan bahasa Indonesia
             const bulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             const formatTanggal = `${besok.getDate()} ${bulanIndo[besok.getMonth()]} ${besok.getFullYear()}`;
             
             const dataJadwal = jadwalSekolah[hariIndex];
             
-            /* PEMBUATAN HEADER */
+            // Header Template
             let teks = `╭─────────────── ✰\n`;
             teks += `│ 🗓️ ${dataJadwal.hari}, ${formatTanggal}\n`;
             teks += `│ ⏰ ${dataJadwal.waktu}\n`;
@@ -467,7 +507,7 @@
                 if(m !== "```Istirahat```") mapelUnik.add(m);
             });
             
-            /* PEMBUATAN PR DENGAN SINGKATAN */
+            // PR Section
             teks += `├─────────────── ✰\n`;
             teks += `│ 📘 *PR*:\n`;
             let adaPR = false;
@@ -475,19 +515,18 @@
             mapelUnik.forEach(m => {
                 if (dataPR[m]) {
                     adaPR = true;
-                    // Terapkan Singkatan jika ada di daftar alias, jika tidak pakai nama asli
-                    let namaPelajaran = aliasPR[m] || m; 
-                    teks += wrapText(namaPelajaran + " ", dataPR[m]) + "\n";
+                    let namaSingkat = aliasPR[m] || m; 
+                    teks += wrapTextWithHyphen(namaSingkat + " ", dataPR[m]) + "\n";
                 }
             });
             if (!adaPR) teks += `│ • –\n`;
 
-            /* PEMBUATAN INFO MULTIPEL */
+            // Info Section
             teks += `├─────────────── ✰\n`;
             teks += `│ 💭 *Info*:\n`;
             if (listInfo.length > 0) {
                 listInfo.forEach(infoStr => {
-                    teks += wrapText("", infoStr) + "\n";
+                    teks += wrapTextWithHyphen("", infoStr) + "\n";
                 });
             } else {
                 teks += `│ • –\n`;
@@ -495,19 +534,19 @@
             teks += `╰─────────────── ✰`;
 
             document.getElementById('hasilJadwal').value = teks;
-            showModal("Jadwal Siap!", "Jadwal untuk besok berhasil digenerate, gulir ke bawah untuk melihat hasilnya.");
+            showModal("Selesai!", "Jadwal berhasil dibuat. Gulir ke bawah untuk menyalin.");
         }
 
-        /* FUNGSI SALIN HASIL */
+        /* COPY FUNCTION */
         function copyKeClipboard() {
             const hasil = document.getElementById('hasilJadwal');
             if(!hasil.value) {
-                showModal("Gagal", "Buat jadwal terlebih dahulu sebelum di copy!");
+                showModal("Peringatan", "Buat jadwal terlebih dahulu!");
                 return;
             }
             hasil.select();
             document.execCommand('copy');
-            showModal("Disalin!", "Teks jadwal berhasil disalin dan siap dikirim ke WhatsApp.");
+            showModal("Disalin!", "Teks berhasil disalin dan siap ditempel ke WhatsApp.");
         }
     </script>
 </body>
