@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jadwal 9.4 Generator</title>
-    <!-- Library Iconify untuk ikon UI -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <style>
         * {
@@ -19,7 +18,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
+        
+        /* Animasi Masuk */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .container {
             background-color: #1e1e1e;
             padding: 20px;
@@ -29,7 +36,21 @@
             border: 1px solid #2d2d2d;
             margin-bottom: 20px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            opacity: 0;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+        
+        /* Staggered Delay untuk tiap container */
+        .container:nth-child(2) { animation-delay: 0.1s; }
+        .container:nth-child(3) { animation-delay: 0.2s; }
+        .container:nth-child(4) { animation-delay: 0.3s; }
+
+        .container:hover {
+            border-color: #3ea6ff44;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.8);
+        }
+
         h2 {
             margin-top: 0;
             font-size: 1.15rem;
@@ -45,6 +66,10 @@
             vertical-align: middle;
             margin-right: 8px;
             font-size: 1.3em;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        button:hover iconify-icon {
+            transform: scale(1.2) rotate(5deg);
         }
         button iconify-icon {
             font-size: 1.2em;
@@ -60,9 +85,10 @@
             font-weight: 500;
             font-size: 0.9rem;
             color: #aaa;
+            transition: color 0.3s;
         }
 
-        /* Inputs & Buttons */
+        /* Inputs */
         textarea, input[type="text"] {
             width: 100%;
             padding: 12px;
@@ -73,12 +99,15 @@
             color: #fff;
             font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        textarea:focus, input[type="text"]:focus {
+        textarea:focus, input[type="text"]:focus, textarea:hover, input[type="text"]:hover {
             border-color: #3ea6ff;
+            box-shadow: 0 0 0 3px rgba(62, 166, 255, 0.15);
+            background-color: #2a2a2a;
         }
 
+        /* Buttons & Hover Effects */
         button {
             width: 100%;
             padding: 12px;
@@ -89,26 +118,42 @@
             color: #0f0f0f;
             font-weight: 600;
             font-size: 0.95rem;
-            transition: opacity 0.2s;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        button:hover { opacity: 0.9; }
+        button:hover { 
+            background-color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(255, 255, 255, 0.15);
+        }
+        button:active {
+            transform: translateY(0);
+        }
         
         .btn-outline {
             background-color: transparent;
             border: 1px solid #333;
             color: #f1f1f1;
         }
-        .btn-outline:hover { background-color: #272727; }
+        .btn-outline:hover { 
+            background-color: #272727; 
+            border-color: #3ea6ff;
+            box-shadow: 0 6px 16px rgba(62, 166, 255, 0.15);
+        }
 
         .btn-delete-all {
             background-color: #272727;
-            color: #3ea6ff;
-            border: 1px solid #2d4a66;
+            color: #ff4a4a;
+            border: 1px solid #662d2d;
         }
-        .btn-delete-all:hover { background-color: #1a324a; }
+        .btn-delete-all:hover { 
+            background-color: #4a1a1a;
+            color: #ff7575;
+            box-shadow: 0 6px 16px rgba(255, 74, 74, 0.2);
+        }
 
         .btn-add-info {
             background-color: #272727;
@@ -118,7 +163,10 @@
             padding: 10px;
             font-size: 0.88rem;
         }
-        .btn-add-info:hover { background-color: #1a324a; }
+        .btn-add-info:hover { 
+            background-color: #1a324a; 
+            border-style: solid;
+        }
 
         /* Custom Dropdown UI */
         .custom-select-wrapper {
@@ -136,7 +184,18 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
+        .custom-select:hover {
+            border-color: #3ea6ff;
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scaleY(0.9) translateY(-10px); }
+            to { opacity: 1; transform: scaleY(1) translateY(0); }
+        }
+
         .custom-options {
             position: absolute;
             top: 100%;
@@ -150,16 +209,26 @@
             display: none;
             max-height: 220px;
             overflow-y: auto;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.8);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.8);
+            transform-origin: top center;
         }
-        .custom-options.show { display: block; }
+        .custom-options.show { 
+            display: block; 
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
         .custom-option {
             padding: 12px;
             border-bottom: 1px solid #1f1f1f;
             font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
         .custom-option:last-child { border-bottom: none; }
-        .custom-option:hover { background-color: #383838; }
+        .custom-option:hover { 
+            background-color: #383838; 
+            padding-left: 18px;
+            color: #3ea6ff;
+        }
 
         /* Checkbox Info */
         .info-checkbox-group {
@@ -168,7 +237,9 @@
             border-radius: 10px;
             padding: 12px;
             border: 1px solid #333;
+            transition: border-color 0.3s;
         }
+        .info-checkbox-group:hover { border-color: #555; }
         .checkbox-container {
             display: flex;
             align-items: flex-start;
@@ -176,12 +247,21 @@
             font-size: 0.88rem;
             color: #ddd;
             line-height: 1.4;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .checkbox-container:hover {
+            transform: translateX(4px);
+            color: #fff;
         }
         .checkbox-container:last-child { margin-bottom: 0; }
         .checkbox-container input {
             margin-right: 10px;
             margin-top: 2px;
             accent-color: #3ea6ff;
+            cursor: pointer;
+            transform: scale(1.1);
+            transition: transform 0.2s;
         }
 
         /* Input Info Tambahan Dinamis */
@@ -190,6 +270,7 @@
             align-items: center;
             gap: 8px;
             margin-top: 6px;
+            animation: slideUpFade 0.3s ease forwards;
         }
         .info-input-wrapper input {
             margin-top: 0;
@@ -199,11 +280,15 @@
             margin-top: 0;
             padding: 10px 14px;
             background-color: #272727;
-            color: #3ea6ff;
-            border: 1px solid #2d4a66;
+            color: #ff4a4a;
+            border: 1px solid #662d2d;
             border-radius: 10px;
         }
-        .btn-remove-info:hover { background-color: #1a324a; }
+        .btn-remove-info:hover { 
+            background-color: #4a1a1a; 
+            transform: translateY(0) scale(1.05);
+            box-shadow: none;
+        }
 
         /* Area Result */
         .copy-area {
@@ -212,7 +297,9 @@
             padding: 15px;
             border-radius: 8px;
             margin-top: 25px;
+            transition: all 0.3s;
         }
+        .copy-area:hover { border-color: #3ea6ff; }
         .copy-area h3 {
             margin: 0 0 10px 0;
             color: #fff;
@@ -245,12 +332,12 @@
             padding: 14px 20px;
             border-radius: 8px;
             border: 1px solid #444;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.8);
             z-index: 1000;
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             max-width: 90%;
             width: max-content;
         }
@@ -269,7 +356,8 @@
             z-index: 900;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-content {
@@ -279,13 +367,16 @@
             width: 88%;
             max-width: 380px;
             border: 1px solid #333;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.9);
-            transform: scale(0.95);
-            transition: transform 0.2s;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.9);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             flex-direction: column;
         }
-        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-overlay.active .modal-content { 
+            transform: scale(1) translateY(0); 
+        }
+        
         .modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 12px; text-align: center; display: flex; justify-content: center; align-items: center; }
         .modal-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; line-height: 1.4; text-align: center; }
         
@@ -293,6 +384,7 @@
         .modal-buttons button { margin-top: 0; padding: 10px 16px; border-radius: 10px; }
         .btn-cancel { background-color: #272727; color: #fff; border: 1px solid #444; }
         .btn-confirm { background-color: #3ea6ff; color: #fff; border: none;}
+        .btn-confirm:hover { background-color: #65b8ff; }
 
         #prModal { z-index: 900; }
         #confirmModal { z-index: 1000; }
@@ -314,14 +406,16 @@
             padding: 10px 0;
             border-bottom: 1px solid #282828;
             font-size: 0.85rem;
+            transition: transform 0.2s;
         }
+        .pr-active-item:hover { transform: translateX(4px); }
         .pr-active-item:last-child { border-bottom: none; }
         .pr-item-title { font-weight: 600; color: #3ea6ff; display: block; margin-bottom: 4px; }
         .pr-item-desc { color: #ddd; font-weight: normal; line-height: 1.3;}
         .btn-del-single-pr {
             background-color: #272727;
-            color: #3ea6ff;
-            border: 1px solid #2d4a66;
+            color: #ff4a4a;
+            border: 1px solid #662d2d;
             border-radius: 8px;
             padding: 6px 10px;
             font-size: 0.75rem;
@@ -330,7 +424,11 @@
             margin-left: 10px;
             flex-shrink: 0;
         }
-        .btn-del-single-pr:hover { background-color: #1a324a; }
+        .btn-del-single-pr:hover { 
+            background-color: #4a1a1a;
+            transform: scale(1.05);
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -343,13 +441,13 @@
 
     <!-- Container PR -->
     <div class="container">
-        <h2><iconify-icon icon="mdi:pencil-box-outline"></iconify-icon> Catat PR Hari Ini</h2>
+        <h2><iconify-icon icon="mdi:pencil"></iconify-icon> Catat PR Hari Ini</h2>
         <label>Pilih Pelajaran:</label>
         
         <div class="custom-select-wrapper" id="dropdownPR">
             <div class="custom-select" onclick="toggleDropdown()">
                 <span id="selectedMapel" style="color: #aaa;">-- Pilih Pelajaran --</span>
-                <span id="dropdownIcon" style="font-size: 0.8rem; color: #888;">▼</span>
+                <span id="dropdownIcon" style="font-size: 0.8rem; color: #888; transition: transform 0.3s;">▼</span>
             </div>
             <div class="custom-options" id="optionsPR">
                 <div class="custom-option" onclick="selectOption('PAI')">PAI</div>
@@ -371,15 +469,14 @@
         <textarea id="isiPR" rows="3" placeholder="Contoh: selesaikan halaman 7..."></textarea>
         
         <button onclick="simpanPR()">Simpan PR</button>
-        <!-- Tombol Buka Panel PR -->
         <button onclick="bukaModalPR()" class="btn-outline" style="color: #3ea6ff; border-color: #2d4a66; margin-top: 12px;">
-            <iconify-icon icon="mdi:clipboard-list-outline"></iconify-icon> Lihat Daftar PR yang Tersimpan
+            <iconify-icon icon="mdi:clipboard-list"></iconify-icon> Lihat Daftar PR
         </button>
     </div>
 
     <!-- Container Generate -->
     <div class="container">
-        <h2><iconify-icon icon="mdi:cog-outline"></iconify-icon> Persiapan Jadwal Besok</h2>
+        <h2><iconify-icon icon="mdi:cog"></iconify-icon> Persiapan Jadwal Besok</h2>
         
         <label>Template Info (Pilih >1):</label>
         <div class="info-checkbox-group">
@@ -407,11 +504,11 @@
         
         <button onclick="generateJadwal()">Generate Jadwal</button>
         <button onclick="konfirmasiHapusSemuaPR()" class="btn-delete-all">
-            <iconify-icon icon="mdi:delete-sweep-outline"></iconify-icon> Hapus Semua Data PR
+            <iconify-icon icon="mdi:delete-sweep"></iconify-icon> Hapus Semua Data PR
         </button>
         
         <div class="copy-area">
-            <h3><iconify-icon icon="mdi:calendar-check-outline"></iconify-icon> Preview Jadwal</h3>
+            <h3><iconify-icon icon="mdi:calendar-check"></iconify-icon> Preview Jadwal</h3>
             <textarea id="hasilJadwal" readonly placeholder="Klik 'Generate Jadwal' untuk melihat jadwal besok..."></textarea>
             <button onclick="copyKeClipboard()">Copy Jadwal ke Clipboard</button>
         </div>
@@ -419,7 +516,7 @@
 
     <!-- Container Sync -->
     <div class="container">
-        <h2><iconify-icon icon="mdi:cloud-sync-outline"></iconify-icon> Transfer Data PR Antar Perangkat</h2>
+        <h2><iconify-icon icon="mdi:cloud-sync"></iconify-icon> Transfer Data PR</h2>
         <label>Salin kode ini untuk dipindahkan ke perangkat lain:</label>
         <input type="text" id="syncKode" readonly placeholder="Kode Kosong">
         <button onclick="copySyncKode()" class="btn-outline">Copy Kode Data</button>
@@ -432,13 +529,13 @@
     <!-- MODAL PANEL DAFTAR PR -->
     <div class="modal-overlay" id="prModal">
         <div class="modal-content" style="max-width: 420px;">
-            <div class="modal-title"><iconify-icon icon="mdi:clipboard-list-outline"></iconify-icon> Daftar PR yang Tersimpan</div>
+            <div class="modal-title"><iconify-icon icon="mdi:clipboard-list"></iconify-icon> Daftar PR Tersimpan</div>
             <div class="pr-active-list" id="prModalList"></div>
             <button class="btn-outline" onclick="tutupModalPR()">Tutup Panel</button>
         </div>
     </div>
 
-    <!-- MODAL CONFIRMATION (Peringatan Hapus) -->
+    <!-- MODAL CONFIRMATION -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
             <div class="modal-title" id="confirmTitle">Peringatan!</div>
@@ -468,9 +565,9 @@
         function toggleDropdown() { 
             dropdownOptions.classList.toggle('show');
             if (dropdownOptions.classList.contains('show')) {
-                dropdownIcon.innerText = '▲';
+                dropdownIcon.style.transform = 'rotate(180deg)';
             } else {
-                dropdownIcon.innerText = '▼';
+                dropdownIcon.style.transform = 'rotate(0deg)';
             }
         }
         function selectOption(value) {
@@ -478,12 +575,12 @@
             selectedMapelText.innerText = value;
             selectedMapelText.style.color = '#fff';
             dropdownOptions.classList.remove('show');
-            dropdownIcon.innerText = '▼';
+            dropdownIcon.style.transform = 'rotate(0deg)';
         }
         window.onclick = function(e) {
             if (!e.target.closest('.custom-select-wrapper')) {
                 dropdownOptions.classList.remove('show');
-                dropdownIcon.innerText = '▼';
+                dropdownIcon.style.transform = 'rotate(0deg)';
             }
         }
 
@@ -540,11 +637,14 @@
             const btnRemove = document.createElement('button');
             btnRemove.type = 'button';
             btnRemove.className = 'btn-remove-info';
-            btnRemove.innerHTML = '<iconify-icon icon="mdi:close" style="margin:0; font-size: 1.2em;"></iconify-icon>';
+            btnRemove.innerHTML = '<iconify-icon icon="mdi:close-thick" style="margin:0; font-size: 1.2em;"></iconify-icon>';
             
             btnRemove.onclick = () => {
-                container.removeChild(wrapper);
-                updateInfoPlaceholders();
+                wrapper.style.animation = 'slideUpFade 0.3s ease reverse forwards';
+                setTimeout(() => {
+                    container.removeChild(wrapper);
+                    updateInfoPlaceholders();
+                }, 300);
             };
 
             wrapper.appendChild(input);
@@ -619,7 +719,7 @@
                             <span class="pr-item-desc">${dataPR[mapel]}</span>
                         </div>
                         <button class="btn-del-single-pr" onclick="konfirmasiHapusSatuPR('${mapel}')">
-                            <iconify-icon icon="mdi:close" style="font-size: 1.1em; margin: 0;"></iconify-icon> Hapus
+                            <iconify-icon icon="mdi:close-thick" style="font-size: 1.1em; margin: 0;"></iconify-icon> Hapus
                         </button>
                     </div>
                 `;
