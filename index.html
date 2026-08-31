@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Jadwal & PR</title>
+    <title>Jadwal Sekolah & Tracker PR</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,7 +25,7 @@
             margin-bottom: 20px;
         }
         h2 { margin-top: 0; font-size: 1.2rem; color: #89b4fa; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 0.9rem; }
         select, input, textarea, button {
             width: 100%;
             padding: 10px;
@@ -35,6 +35,7 @@
             background-color: #181825;
             color: #cdd6f4;
             box-sizing: border-box;
+            font-size: 0.95rem;
         }
         button {
             background-color: #89b4fa;
@@ -46,169 +47,175 @@
             transition: 0.2s;
         }
         button:hover { background-color: #b4befe; }
-        .btn-danger { background-color: #f38ba8; }
+        .btn-danger { background-color: #f38ba8; margin-top: 10px; }
         .btn-danger:hover { background-color: #eba0ac; }
+        
+        /* Area Copy Hasil */
+        .copy-area {
+            background-color: #181825;
+            border: 2px solid #89b4fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .copy-area h3 {
+            margin: 0 0 10px 0;
+            color: #a6e3a1;
+            font-size: 1.1rem;
+            text-align: center;
+        }
         textarea#hasilJadwal {
-            height: 350px;
-            font-family: monospace;
+            height: 380px;
+            font-family: 'Courier New', Courier, monospace;
             white-space: pre;
             resize: none;
+            border: none;
+            background-color: #11111b;
+            color: #a6adc8;
         }
+        .btn-copy {
+            background-color: #a6e3a1;
+            color: #11111b;
+        }
+        .btn-copy:hover { background-color: #94e2d5; }
     </style>
 </head>
 <body>
 
+    <!-- INPUT PR HARI INI -->
     <div class="container">
         <h2>📝 Catat PR Hari Ini</h2>
-        <label for="mapelPR">Mata Pelajaran:</label>
+        <label for="mapelPR">Mata Pelajaran yang ada PR:</label>
         <select id="mapelPR">
             <option value="PAI">PAI</option>
             <option value="IPS">IPS</option>
             <option value="B. Inggris">B. Inggris</option>
-            <option value="Matematika">Matematika</option>
+            <option value="B. Indonesia">B. Indonesia</option>
+            <option value="Pendidikan Pancasila">Pendidikan Pancasila</option>
+            <option value="SBK">SBK</option>
             <option value="IPA">IPA</option>
-            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+            <option value="Matematika">Matematika</option>
+            <option value="B. Sunda">B. Sunda</option>
+            <option value="BTQ">BTQ</option>
+            <option value="PJOK">PJOK</option>
+            <option value="Informatika">Informatika</option>
         </select>
-        <label for="isiPR">Detail PR/Tugas:</label>
+        <label for="isiPR">Detail PR/Tugas (Tulis tugasnya saja):</label>
         <textarea id="isiPR" rows="3" placeholder="Contoh: selesaikan modul halaman 7..."></textarea>
         <button onclick="simpanPR()">Simpan PR</button>
     </div>
 
+    <!-- GENERATOR JADWAL BESOK -->
     <div class="container">
-        <h2>⚙️ Generate Jadwal Besok</h2>
-        <label for="infoBesok">Info Tambahan (Opsional):</label>
+        <h2>⚙️ Persiapan Jadwal Besok</h2>
+        <label for="infoBesok">Tulis Info Tambahan (Opsional):</label>
         <input type="text" id="infoBesok" placeholder="Contoh: Besok upacara! datang lebih awal.">
-        <button onclick="generateJadwal()">Buat Jadwal</button>
+        
+        <button onclick="generateJadwal()">Buat Jadwal Besok</button>
         <button onclick="hapusSemuaPR()" class="btn-danger">Hapus Semua Data PR</button>
         
-        <label for="hasilJadwal">Hasil Template:</label>
-        <textarea id="hasilJadwal" readonly></textarea>
-        <button onclick="copyKeClipboard()">Copy Hasil</button>
+        <!-- HALAMAN / AREA MENYALIN HASIL -->
+        <div class="copy-area">
+            <h3>📋 Halaman Hasil Jadwal</h3>
+            <textarea id="hasilJadwal" readonly placeholder="Klik 'Buat Jadwal Besok' terlebih dahulu..."></textarea>
+            <button onclick="copyKeClipboard()" class="btn-copy">Copy Jadwal ke Clipboard</button>
+        </div>
     </div>
 
     <script>
-        // Database Jadwal (Bisa kamu edit sesuai jadwal aslimu)
+        // Database Jadwal Lengkap Sesuai Permintaan
         const jadwalSekolah = {
-            1: { hari: "Senin", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["PAI", "PAI", "IPS", "```Istirahat```", "IPS", "B. Inggris", "B. Inggris"] },
-            2: { hari: "Selasa", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["Matematika", "Matematika", "IPA", "```Istirahat```", "Bahasa Indonesia", "Bahasa Indonesia"] },
-            3: { hari: "Rabu", waktu: "06.30 – 11.50", seragam: "Pramuka", mapel: ["IPA", "IPA", "B. Inggris", "```Istirahat```", "IPS", "PAI"] },
-            4: { hari: "Kamis", waktu: "06.30 – 11.50", seragam: "Batik", mapel: ["Bahasa Indonesia", "Matematika", "Matematika", "```Istirahat```", "IPS", "IPA"] },
-            5: { hari: "Jumat", waktu: "06.30 – 11.00", seragam: "Olahraga", mapel: ["PJOK", "PJOK", "```Istirahat```", "PAI", "Bahasa Indonesia"] }
+            1: { hari: "Senin", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["PAI", "PAI", "PAI", "IPS", "```Istirahat```", "IPS", "B. Inggris", "B. Inggris"] },
+            2: { hari: "Selasa", waktu: "06.30 – 11.50", seragam: "Putih Biru", mapel: ["B. Indonesia", "B. Indonesia", "Pendidikan Pancasila", "```Istirahat```", "Pendidikan Pancasila", "SBK", "SBK"] },
+            3: { hari: "Rabu", waktu: "06.30 – 11.50", seragam: "Kebaya / Encim", mapel: ["IPA", "IPA", "IPA", "```Istirahat```", "Matematika", "Matematika", "Matematika"] },
+            4: { hari: "Kamis", waktu: "06.30 – 12.10", seragam: "Batik", mapel: ["B. Sunda", "BTQ", "PJOK", "```Istirahat```", "PJOK", "IPA", "Informatika", "Informatika"] },
+            5: { hari: "Jumat", waktu: "06.30 – 11.25", seragam: "Muslim", mapel: ["Matematika", "IPS", "B. Inggris", "```Istirahat```", "B. Indonesia", "B. Indonesia", "B. Indonesia"] }
         };
 
-        // Fungsi menyimpan PR ke LocalStorage Browser
+        // Fungsi menyimpan PR ke penyimpanan lokal browser
         function simpanPR() {
             const mapel = document.getElementById('mapelPR').value;
             const isi = document.getElementById('isiPR').value.trim();
+            
             if (!isi) {
                 alert("Isi PR tidak boleh kosong!");
                 return;
             }
+            
             let dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
-            dataPR[mapel] = isi;
+            dataPR[mapel] = isi; // Simpan atau timpa PR untuk mapel tersebut
             localStorage.setItem('dataPR', JSON.stringify(dataPR));
-            alert("PR " + mapel + " berhasil disimpan!");
-            document.getElementById('isiPR').value = "";
+            
+            alert("PR untuk " + mapel + " berhasil disimpan ke sistem!");
+            document.getElementById('isiPR').value = ""; // Kosongkan kolom input
         }
 
+        // Fungsi menghapus semua PR yang sudah selesai/lewat
         function hapusSemuaPR() {
-            if(confirm("Yakin ingin menghapus semua data PR yang tersimpan?")) {
+            if(confirm("Yakin ingin menghapus semua data PR yang tersimpan? Lakukan ini jika semua PR minggu ini sudah selesai.")) {
                 localStorage.removeItem('dataPR');
-                alert("Data PR dibersihkan.");
+                alert("Semua data PR berhasil dibersihkan.");
             }
         }
 
-        // Fungsi pemotong teks agar tidak tembus batas ✰ (Maks 28 karakter per baris isi)
+        // Fungsi memotong teks secara otomatis agar tidak tembus batas ✰ (Maks 28 karakter)
         function wrapText(prefix, text) {
             const maxLen = 28;
-            const words = text.split(' ');
+            let fullText = prefix + text;
+            const words = fullText.split(' ');
             let lines = [];
             let currentLine = '';
 
             for (let word of words) {
-                if ((currentLine + word).length > maxLen) {
-                    lines.push(currentLine.trim());
-                    currentLine = word + ' ';
+                if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLen) {
+                    if (currentLine) lines.push(currentLine);
+                    currentLine = word;
                 } else {
-                    currentLine += word + ' ';
+                    currentLine = currentLine ? currentLine + ' ' + word : word;
                 }
             }
-            if (currentLine) lines.push(currentLine.trim());
+            if (currentLine) lines.push(currentLine);
 
             let result = '';
             for (let i = 0; i < lines.length; i++) {
                 if (i === 0) {
-                    result += `│ • ${prefix}${lines[i]}\n`;
+                    result += `│ • ${lines[i]}\n`; // Baris pertama pakai titik
                 } else {
-                    result += `│    ${lines[i]}\n`;
+                    result += `│    ${lines[i]}\n`; // Baris selanjutnya menjorok
                 }
             }
             return result.trimRight(); 
         }
 
+        // Fungsi merakit template text
         function generateJadwal() {
             const info = document.getElementById('infoBesok').value.trim();
-            const dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
-            
-            // Dapatkan tanggal besok
-            let besok = new Date();
-            besok.setDate(besok.getDate() + 1);
-            let hariIndex = besok.getDay(); // 0 = Minggu, 1 = Senin, dst
-            
-            if (hariIndex === 0 || hariIndex === 6) {
-                document.getElementById('hasilJadwal').value = "Besok libur, tidak ada jadwal sekolah!";
-                return;
-            }
+            const data**Jadwal Pelajaran Mingguan**
 
-            const formatTanggal = besok.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-            const dataJadwal = jadwalSekolah[hariIndex];
-            
-            // Format Bagian Header & Jadwal
-            let teks = `╭─────────────── ✰\n`;
-            teks += `│ 🗓️ ${dataJadwal.hari}, ${formatTanggal}\n`;
-            teks += `│ ⏰ ${dataJadwal.waktu}\n`;
-            teks += `│ 👔 ${dataJadwal.seragam}\n`;
-            teks += `├─────────────── ✰\n`;
-            teks += `│ 📚 *Jadwal*:\n`;
-            
-            let mapelUnik = new Set();
-            dataJadwal.mapel.forEach(m => {
-                teks += `│ • ${m}\n`;
-                if(m !== "```Istirahat```") mapelUnik.add(m);
-            });
-            
-            // Format Bagian PR (Otomatis deteksi dari mapel besok)
-            teks += `├─────────────── ✰\n`;
-            teks += `│ 📘 *PR*:\n`;
-            let adaPR = false;
-            mapelUnik.forEach(m => {
-                if (dataPR[m]) {
-                    adaPR = true;
-                    // Format: B. Inggris selesaikan modul...
-                    teks += wrapText(m + " ", dataPR[m]) + "\n";
-                }
-            });
-            if (!adaPR) teks += `│ • –\n`;
+| Hari | Waktu | Seragam | Urutan Mata Pelajaran |
+| :--- | :--- | :--- | :--- |
+| **Senin** | 06.30 - 11.50 | Putih Biru | PAI, PAI, PAI, IPS, *Istirahat*, IPS, B. Inggris, B. Inggris |
+| **Selasa** | 06.30 - 11.50 | Putih Biru | B. Indonesia, B. Indonesia, Pend. Pancasila, *Istirahat*, Pend. Pancasila, SBK, SBK |
+| **Rabu** | 06.30 - 11.50 | Kebaya/Encim | IPA, IPA, IPA, *Istirahat*, Matematika, Matematika, Matematika |
+| **Kamis** | 06.30 - 12.10 | Batik | B. Sunda, BTQ, PJOK, *Istirahat*, PJOK, IPA, Informatika, Informatika |
+| **Jum'at** | 06.30 - 11.25 | Muslim | Matematika, IPS, B. Inggris, *Istirahat*, B. Indonesia, B. Indonesia, B. Indonesia |
 
-            // Format Bagian Info
-            teks += `├─────────────── ✰\n`;
-            teks += `│ 💭 *Info*:\n`;
-            if (info) {
-                teks += wrapText("", info) + "\n";
-            } else {
-                teks += `│ • –\n`;
-            }
-            teks += `╰─────────────── ✰`;
+---
 
-            document.getElementById('hasilJadwal').value = teks;
-        }
+**Jadwal Esok Hari (Selasa)**
 
-        function copyKeClipboard() {
-            const hasil = document.getElementById('hasilJadwal');
-            hasil.select();
-            document.execCommand('copy');
-            alert("Berhasil disalin!");
-        }
-    </script>
-</body>
-</html>
+Silakan salin teks di dalam kotak di bawah ini untuk jadwal besok:
+
+```text
+📅 JADWAL PELAJARAN - SELASA
+⏰ Waktu: 06.30 - 11.50
+👔 Seragam: Putih Biru (Putbir)
+
+📚 Mata Pelajaran:
+1. B. Indonesia
+2. B. Indonesia
+3. Pendidikan Pancasila
+-- ISTIRAHAT --
+4. Pendidikan Pancasila
+5. SBK
+6. SBK
