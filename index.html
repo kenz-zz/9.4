@@ -345,12 +345,12 @@
         </div>
 
         <label for="isiPR">Detail PR/Tugas:</label>
-        <textarea id="isiPR" rows="3" placeholder="Contoh: selesaikan modul halaman 7..."></textarea>
+        <textarea id="isiPR" rows="3" placeholder="Contoh: selesaikan halaman 7..."></textarea>
         
         <button onclick="simpanPR()">Simpan PR</button>
         <!-- Tombol Buka Panel PR -->
         <button onclick="bukaModalPR()" class="btn-outline" style="color: #3ea6ff; border-color: #2d4a66; margin-top: 12px;">
-            📂 Lihat Daftar PR Tersimpan
+            📂 Lihat Daftar PR yang Tersimpan
         </button>
     </div>
 
@@ -358,14 +358,14 @@
     <div class="container">
         <h2>⚙️ Persiapan Jadwal Besok</h2>
         
-        <label>Template Info Cepat (Pilih >1):</label>
+        <label>Template Info (Pilih >1):</label>
         <div class="info-checkbox-group">
             <label class="checkbox-container">
                 <input type="checkbox" value="Besok upacara! datang lebih awal.">
                 <span>1. Info Upacara</span>
             </label>
             <label class="checkbox-container">
-                <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan sholat, dan infak seikhlas- nya.">
+                <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan sholat, dan infak seikhlasnya.">
                 <span>2. Info Tasaqur</span>
             </label>
             <label class="checkbox-container">
@@ -378,26 +378,26 @@
             </label>
         </div>
 
-        <label>Info Tambahan Manual (Maks. 5):</label>
+        <label>Info Manual (Maks. 5):</label>
         <div id="infoInputsContainer">
             <!-- Input akan di-generate oleh JavaScript agar bisa menyesuaikan nomor otomatis -->
         </div>
         <button type="button" class="btn-add-info" id="btnAddInfo" onclick="tambahInputInfo()">+ Tambah Info Manual</button>
         
-        <button onclick="generateJadwal()">Buat Jadwal Besok</button>
-        <button onclick="konfirmasiHapusSemuaPR()" class="btn-delete-all">Hapus SEMUA Data PR</button>
+        <button onclick="generateJadwal()">Generate Jadwal</button>
+        <button onclick="konfirmasiHapusSemuaPR()" class="btn-delete-all">Hapus Semua Data PR</button>
         
         <div class="copy-area">
-            <h3>📋 Halaman Hasil Jadwal</h3>
-            <textarea id="hasilJadwal" readonly placeholder="Klik 'Buat Jadwal Besok' terlebih dahulu..."></textarea>
+            <h3>📋 Preview Jadwal</h3>
+            <textarea id="hasilJadwal" readonly placeholder="Klik "Generate Jadwal" untuk melihat jadwal besok..."></textarea>
             <button onclick="copyKeClipboard()">Copy Jadwal ke Clipboard</button>
         </div>
     </div>
 
     <!-- Container Sync -->
     <div class="container">
-        <h2>🔄 Transfer Data Antar Perangkat</h2>
-        <label>Salin kode ini untuk dipindahkan ke HP/Laptop lain:</label>
+        <h2>🔄 Transfer Data PR Antar Perangkat</h2>
+        <label>Salin kode ini untuk dipindahkan ke perangkat lain:</label>
         <input type="text" id="syncKode" readonly placeholder="Kode Kosong">
         <button onclick="copySyncKode()" class="btn-outline">Copy Kode Data</button>
         
@@ -409,7 +409,7 @@
     <!-- MODAL PANEL DAFTAR PR -->
     <div class="modal-overlay" id="prModal">
         <div class="modal-content" style="max-width: 420px;">
-            <div class="modal-title">📂 Daftar PR Tersimpan</div>
+            <div class="modal-title">📂 Daftar PR yang Tersimpan</div>
             <div class="pr-active-list" id="prModalList">
                 <!-- List akan dirender oleh JS -->
             </div>
