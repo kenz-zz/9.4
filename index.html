@@ -58,7 +58,7 @@
             transition: border-color 0.2s;
         }
         textarea:focus, input[type="text"]:focus {
-            border-color: #3ea6ff; /* Aksen Biru */
+            border-color: #3ea6ff;
         }
 
         button {
@@ -72,6 +72,7 @@
             font-weight: 600;
             font-size: 0.95rem;
             transition: opacity 0.2s;
+            cursor: pointer;
         }
         button:hover { opacity: 0.9; }
         
@@ -115,6 +116,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.95rem;
+            cursor: pointer;
         }
         .custom-options {
             position: absolute;
@@ -136,6 +138,7 @@
             padding: 12px;
             border-bottom: 1px solid #1f1f1f;
             font-size: 0.9rem;
+            cursor: pointer;
         }
         .custom-option:last-child { border-bottom: none; }
         .custom-option:hover { background-color: #383838; }
@@ -155,12 +158,14 @@
             font-size: 0.88rem;
             color: #ddd;
             line-height: 1.4;
+            cursor: pointer;
         }
         .checkbox-container:last-child { margin-bottom: 0; }
         .checkbox-container input {
             margin-right: 10px;
             margin-top: 2px;
-            accent-color: #3ea6ff; /* Centang Biru */
+            accent-color: #3ea6ff;
+            cursor: pointer;
         }
 
         /* Input Info Tambahan Dinamis */
@@ -210,7 +215,7 @@
             resize: vertical;
         }
 
-        /* TOP NOTIFICATION (Sudut disesuaikan, tidak terlalu bulat) */
+        /* TOP NOTIFICATION */
         .top-toast {
             position: fixed;
             top: -100px;
@@ -219,7 +224,7 @@
             background-color: #282828;
             color: #fff;
             padding: 14px 20px;
-            border-radius: 8px; /* Dibuat lebih kotak (tidak 30px) */
+            border-radius: 8px;
             border: 1px solid #444;
             box-shadow: 0 8px 25px rgba(0,0,0,0.8);
             z-index: 1000;
@@ -270,7 +275,6 @@
         .btn-cancel { background-color: #272727; color: #fff; border: 1px solid #444; }
         .btn-confirm { background-color: #3ea6ff; color: #fff; border: none;}
 
-        /* Z-Index Spesifik agar Peringatan Hapus ada di atas Panel PR */
         #prModal { z-index: 900; }
         #confirmModal { z-index: 1000; }
 
@@ -320,13 +324,13 @@
 
     <!-- Container PR -->
     <div class="container">
-        <h2>📝 Catat PR Hari Ini</h2>
+        <h2>✎ Catat PR Hari Ini</h2>
         <label>Pilih Pelajaran:</label>
         
         <div class="custom-select-wrapper" id="dropdownPR">
             <div class="custom-select" onclick="toggleDropdown()">
-                <span id="selectedMapel">B. Indonesia</span>
-                <span style="font-size: 0.8rem; color: #888;">▼</span>
+                <span id="selectedMapel" style="color: #aaa;">-- Pilih Pelajaran --</span>
+                <span id="dropdownIcon" style="font-size: 0.8rem; color: #888;">▼</span>
             </div>
             <div class="custom-options" id="optionsPR">
                 <div class="custom-option" onclick="selectOption('PAI')">PAI</div>
@@ -350,13 +354,13 @@
         <button onclick="simpanPR()">Simpan PR</button>
         <!-- Tombol Buka Panel PR -->
         <button onclick="bukaModalPR()" class="btn-outline" style="color: #3ea6ff; border-color: #2d4a66; margin-top: 12px;">
-            📂 Lihat Daftar PR yang Tersimpan
+            ▤ Lihat Daftar PR yang Tersimpan
         </button>
     </div>
 
     <!-- Container Generate -->
     <div class="container">
-        <h2>⚙️ Persiapan Jadwal Besok</h2>
+        <h2>⚙ Persiapan Jadwal Besok</h2>
         
         <label>Template Info (Pilih >1):</label>
         <div class="info-checkbox-group">
@@ -365,7 +369,8 @@
                 <span>1. Info Upacara</span>
             </label>
             <label class="checkbox-container">
-                <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan sholat, dan infak seikhlasnya.">
+                <!-- Gunakan &#10; untuk membuat teks otomatis turun satu baris di hasil output teks -->
+                <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan&#10;sholat, dan infak seikhlas-&#10;nya.">
                 <span>2. Info Tasaqur</span>
             </label>
             <label class="checkbox-container">
@@ -388,7 +393,7 @@
         <button onclick="konfirmasiHapusSemuaPR()" class="btn-delete-all">Hapus Semua Data PR</button>
         
         <div class="copy-area">
-            <h3>📋 Preview Jadwal</h3>
+            <h3>❏ Preview Jadwal</h3>
             <textarea id="hasilJadwal" readonly placeholder="Klik 'Generate Jadwal' untuk melihat jadwal besok..."></textarea>
             <button onclick="copyKeClipboard()">Copy Jadwal ke Clipboard</button>
         </div>
@@ -396,7 +401,7 @@
 
     <!-- Container Sync -->
     <div class="container">
-        <h2>🔄 Transfer Data PR Antar Perangkat</h2>
+        <h2>⟳ Transfer Data PR Antar Perangkat</h2>
         <label>Salin kode ini untuk dipindahkan ke perangkat lain:</label>
         <input type="text" id="syncKode" readonly placeholder="Kode Kosong">
         <button onclick="copySyncKode()" class="btn-outline">Copy Kode Data</button>
@@ -409,7 +414,7 @@
     <!-- MODAL PANEL DAFTAR PR -->
     <div class="modal-overlay" id="prModal">
         <div class="modal-content" style="max-width: 420px;">
-            <div class="modal-title">📂 Daftar PR yang Tersimpan</div>
+            <div class="modal-title">▤ Daftar PR yang Tersimpan</div>
             <div class="pr-active-list" id="prModalList">
                 <!-- List akan dirender oleh JS -->
             </div>
@@ -430,19 +435,42 @@
     </div>
 
     <script>
-        /* DROPDOWN LOGIC */
+        /* MENGATUR SCROLL BODY JIKA MODAL TERBUKA */
+        function updateBodyScroll() {
+            const anyModalOpen = document.querySelectorAll('.modal-overlay.active').length > 0;
+            if (anyModalOpen) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        /* DROPDOWN LOGIC DENGAN ANIMASI PANAH */
         const dropdownOptions = document.getElementById('optionsPR');
         const selectedMapelText = document.getElementById('selectedMapel');
-        let currentSelectedMapel = "B. Indonesia";
+        const dropdownIcon = document.getElementById('dropdownIcon');
+        let currentSelectedMapel = null; // Default kosong
 
-        function toggleDropdown() { dropdownOptions.classList.toggle('show'); }
+        function toggleDropdown() { 
+            dropdownOptions.classList.toggle('show');
+            if (dropdownOptions.classList.contains('show')) {
+                dropdownIcon.innerText = '▲';
+            } else {
+                dropdownIcon.innerText = '▼';
+            }
+        }
         function selectOption(value) {
             currentSelectedMapel = value;
             selectedMapelText.innerText = value;
+            selectedMapelText.style.color = '#fff';
             dropdownOptions.classList.remove('show');
+            dropdownIcon.innerText = '▼';
         }
         window.onclick = function(e) {
-            if (!e.target.closest('.custom-select-wrapper')) dropdownOptions.classList.remove('show');
+            if (!e.target.closest('.custom-select-wrapper')) {
+                dropdownOptions.classList.remove('show');
+                dropdownIcon.innerText = '▼';
+            }
         }
 
         /* NOTIFIKASI TOAST */
@@ -463,27 +491,30 @@
             document.getElementById('confirmDesc').innerText = desc;
             pendingAction = onConfirm;
             document.getElementById('confirmModal').classList.add('active');
+            updateBodyScroll();
         }
         function tutupModalPeringatan(isConfirmed) {
             document.getElementById('confirmModal').classList.remove('active');
             if (isConfirmed && typeof pendingAction === 'function') pendingAction();
             pendingAction = null;
+            updateBodyScroll();
         }
 
         /* MODAL PANEL PR */
         function bukaModalPR() {
             renderPRModal();
             document.getElementById('prModal').classList.add('active');
+            updateBodyScroll();
         }
         function tutupModalPR() {
             document.getElementById('prModal').classList.remove('active');
+            updateBodyScroll();
         }
 
         /* INFO TAMBAHAN DINAMIS (MAKS 5, OTOMATIS URUT) */
         function tambahInputInfo() {
             const container = document.getElementById('infoInputsContainer');
             
-            // Cek batas maksimal
             if (container.children.length >= 5) {
                 showNotification("Batas Maksimal", "Hanya bisa menambahkan maksimal 5 info!");
                 return;
@@ -501,7 +532,6 @@
             btnRemove.className = 'btn-remove-info';
             btnRemove.innerText = '✕';
             
-            // Jika dihapus, otomatis perbarui urutan angka
             btnRemove.onclick = () => {
                 container.removeChild(wrapper);
                 updateInfoPlaceholders();
@@ -518,13 +548,11 @@
             const container = document.getElementById('infoInputsContainer');
             const wrappers = container.children;
             
-            // Perbarui penomoran placeholder secara otomatis
             for (let i = 0; i < wrappers.length; i++) {
                 const input = wrappers[i].querySelector('input');
                 input.placeholder = `Tulis info manual ${i + 1}...`;
             }
             
-            // Sembunyikan tombol jika sudah mencapai 5
             const btnAdd = document.getElementById('btnAddInfo');
             if (wrappers.length >= 5) {
                 btnAdd.style.display = 'none';
@@ -545,6 +573,11 @@
 
         /* PR MANAGEMENT & RENDER MODAL PANEL */
         function simpanPR() {
+            if (!currentSelectedMapel) {
+                showNotification("Gagal", "Silakan pilih pelajaran terlebih dahulu!");
+                return;
+            }
+
             const isi = document.getElementById('isiPR').value.trim();
             if (!isi) {
                 showNotification("Gagal", "Isi detail tugas PR tidak boleh kosong!");
@@ -593,7 +626,7 @@
                     delete dataPR[mapel];
                     localStorage.setItem('dataPR', JSON.stringify(dataPR));
                     updateSyncCode();
-                    renderPRModal(); // Update tampilan di dalam panel modal
+                    renderPRModal();
                     showNotification("Dihapus", `PR ${mapel} berhasil dihapus.`);
                 }
             );
@@ -636,30 +669,34 @@
             }
         }
 
-        /* LOGIKA WRAPTEXT SC1 */
+        /* LOGIKA WRAPTEXT SC1 DENGAN DUKUNGAN NEWLINE (\n) */
         function wrapText(prefix, text) {
             const maxLen = 28;
-            let fullText = prefix + text;
-            const words = fullText.split(' ');
-            let lines = [];
-            let currentLine = '';
-
-            for (let word of words) {
-                if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLen) {
-                    if (currentLine) lines.push(currentLine);
-                    currentLine = word;
-                } else {
-                    currentLine = currentLine ? currentLine + ' ' + word : word;
-                }
-            }
-            if (currentLine) lines.push(currentLine);
-
             let result = '';
-            for (let i = 0; i < lines.length; i++) {
+            // Pecah teks berdasarkan enter/baris baru bawaan dulu
+            const rawLines = (prefix + text).split('\n');
+            let finalLines = [];
+
+            for (let r = 0; r < rawLines.length; r++) {
+                const words = rawLines[r].split(' ');
+                let currentLine = '';
+
+                for (let word of words) {
+                    if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLen) {
+                        if (currentLine) finalLines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = currentLine ? currentLine + ' ' + word : word;
+                    }
+                }
+                if (currentLine) finalLines.push(currentLine);
+            }
+
+            for (let i = 0; i < finalLines.length; i++) {
                 if (i === 0) {
-                    result += `│ • ${lines[i]}\n`;
+                    result += `│ • ${finalLines[i]}\n`;
                 } else {
-                    result += `│    ${lines[i]}\n`;
+                    result += `│    ${finalLines[i]}\n`;
                 }
             }
             return result.trimRight(); 
@@ -693,11 +730,11 @@
             const dataJadwal = jadwalSekolah[hariIndex];
             
             let teks = `╭─────────────── ✰\n`;
-            teks += `│ 🗓️ ${dataJadwal.hari}, ${formatTanggal}\n`;
-            teks += `│ ⏰ ${dataJadwal.waktu}\n`;
-            teks += `│ 👔 ${dataJadwal.seragam}\n`;
+            teks += `│ ❖ ${dataJadwal.hari}, ${formatTanggal}\n`;
+            teks += `│ ◷ ${dataJadwal.waktu}\n`;
+            teks += `│ ◈ ${dataJadwal.seragam}\n`;
             teks += `├─────────────── ✰\n`;
-            teks += `│ 📚 *Jadwal*:\n`;
+            teks += `│ ✎ *Jadwal*:\n`;
             
             let mapelUnik = new Set();
             dataJadwal.mapel.forEach(m => {
@@ -706,7 +743,7 @@
             });
             
             teks += `├─────────────── ✰\n`;
-            teks += `│ 📘 *PR*:\n`;
+            teks += `│ ▤ *PR*:\n`;
             let adaPR = false;
             
             mapelUnik.forEach(m => {
@@ -723,7 +760,7 @@
             updateSyncCode();
 
             teks += `├─────────────── ✰\n`;
-            teks += `│ 💭 *Info*:\n`;
+            teks += `│ ℹ *Info*:\n`;
             if (listInfo.length > 0) {
                 listInfo.forEach(infoStr => {
                     teks += wrapText("", infoStr) + "\n";
