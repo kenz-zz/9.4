@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal & PR Generator</title>
+    <title>Jadwal 9.4 Generator</title>
     <style>
-        /* Base Styling - KidsTube Dark Mode Style */
         * {
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -59,7 +58,7 @@
             transition: border-color 0.2s;
         }
         textarea:focus, input[type="text"]:focus {
-            border-color: #ff0000;
+            border-color: #3ea6ff; /* Aksen Biru */
         }
 
         button {
@@ -84,22 +83,22 @@
         }
         .btn-outline:hover { background-color: #272727; }
 
-        .btn-danger {
+        .btn-delete-all {
             background-color: #272727;
-            color: #ff4e4e;
-            border: 1px solid #3a1c1c;
+            color: #3ea6ff;
+            border: 1px solid #2d4a66;
         }
-        .btn-danger:hover { background-color: #3a1c1c; }
+        .btn-delete-all:hover { background-color: #1a324a; }
 
         .btn-add-info {
             background-color: #272727;
             color: #3ea6ff;
-            border: 1px dashed #3a4a5a;
+            border: 1px dashed #2d4a66;
             margin-top: 10px;
             padding: 10px;
             font-size: 0.88rem;
         }
-        .btn-add-info:hover { background-color: #1f2d3d; }
+        .btn-add-info:hover { background-color: #1a324a; }
 
         /* Custom Dropdown UI */
         .custom-select-wrapper {
@@ -165,7 +164,7 @@
         .checkbox-container input {
             margin-right: 10px;
             margin-top: 2px;
-            accent-color: #ff0000;
+            accent-color: #3ea6ff; /* Centang Biru */
             cursor: pointer;
         }
 
@@ -184,41 +183,11 @@
             margin-top: 0;
             padding: 10px 14px;
             background-color: #272727;
-            color: #ff4e4e;
-            border: 1px solid #3a1c1c;
+            color: #3ea6ff;
+            border: 1px solid #2d4a66;
             border-radius: 10px;
         }
-
-        /* Daftar PR Aktif Component */
-        .pr-active-list {
-            margin-top: 14px;
-            background-color: #181818;
-            border: 1px solid #2a2a2a;
-            border-radius: 10px;
-            padding: 10px 12px;
-        }
-        .pr-active-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #282828;
-            font-size: 0.85rem;
-        }
-        .pr-active-item:last-child { border-bottom: none; }
-        .pr-item-title { font-weight: 600; color: #ff4e4e; }
-        .pr-item-desc { color: #aaa; margin-left: 6px; font-weight: normal; }
-        .btn-del-single-pr {
-            background-color: #2a1a1a;
-            color: #ff4e4e;
-            border: 1px solid #4a2222;
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            width: auto;
-            margin-top: 0;
-        }
+        .btn-remove-info:hover { background-color: #1a324a; }
 
         /* Area Result */
         .copy-area {
@@ -246,7 +215,7 @@
             resize: vertical;
         }
 
-        /* TOP NOTIFICATION */
+        /* TOP NOTIFICATION (Sudut disesuaikan, tidak terlalu bulat) */
         .top-toast {
             position: fixed;
             top: -100px;
@@ -254,8 +223,8 @@
             transform: translateX(-50%);
             background-color: #282828;
             color: #fff;
-            padding: 14px 24px;
-            border-radius: 30px;
+            padding: 14px 20px;
+            border-radius: 8px; /* Dibuat lebih kotak (tidak 30px) */
             border: 1px solid #444;
             box-shadow: 0 8px 25px rgba(0,0,0,0.8);
             z-index: 1000;
@@ -267,10 +236,10 @@
             width: max-content;
         }
         .top-toast.show { top: 20px; }
-        .top-toast-title { font-weight: 600; font-size: 0.95rem; color: #ff4e4e; }
+        .top-toast-title { font-weight: 600; font-size: 0.95rem; color: #3ea6ff; }
         .top-toast-desc { font-size: 0.88rem; color: #ddd; }
 
-        /* WARNING POPUP MODAL */
+        /* MODAL OVERLAY (Untuk Panel PR & Konfirmasi) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -290,20 +259,61 @@
             border-radius: 16px;
             width: 88%;
             max-width: 380px;
-            text-align: center;
             border: 1px solid #333;
             box-shadow: 0 12px 30px rgba(0,0,0,0.9);
-            transform: scale(0.9);
+            transform: scale(0.95);
             transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
         }
         .modal-overlay.active .modal-content { transform: scale(1); }
-        .modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
-        .modal-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; line-height: 1.4; }
+        .modal-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 12px; text-align: center; }
+        .modal-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; line-height: 1.4; text-align: center; }
         
-        .modal-buttons { display: flex; gap: 10px; }
-        .modal-buttons button { margin-top: 0; padding: 10px 16px; border-radius: 14px; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; }
+        .modal-buttons button { margin-top: 0; padding: 10px 16px; border-radius: 10px; }
         .btn-cancel { background-color: #272727; color: #fff; border: 1px solid #444; }
-        .btn-confirm { background-color: #ff0000; color: #fff; }
+        .btn-confirm { background-color: #3ea6ff; color: #fff; border: none;}
+
+        /* Z-Index Spesifik agar Peringatan Hapus ada di atas Panel PR */
+        #prModal { z-index: 900; }
+        #confirmModal { z-index: 1000; }
+
+        /* Styling Daftar PR di dalam Panel */
+        .pr-active-list {
+            background-color: #181818;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 10px 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .pr-active-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #282828;
+            font-size: 0.85rem;
+        }
+        .pr-active-item:last-child { border-bottom: none; }
+        .pr-item-title { font-weight: 600; color: #3ea6ff; display: block; margin-bottom: 4px; }
+        .pr-item-desc { color: #ddd; font-weight: normal; line-height: 1.3;}
+        .btn-del-single-pr {
+            background-color: #272727;
+            color: #3ea6ff;
+            border: 1px solid #2d4a66;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            width: auto;
+            margin-top: 0;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+        .btn-del-single-pr:hover { background-color: #1a324a; }
     </style>
 </head>
 <body>
@@ -342,13 +352,12 @@
 
         <label for="isiPR">Detail PR/Tugas:</label>
         <textarea id="isiPR" rows="3" placeholder="Contoh: selesaikan modul halaman 7..."></textarea>
+        
         <button onclick="simpanPR()">Simpan PR</button>
-
-        <!-- FITUR BARU: DAFTAR PR AKTIF & HAPUS INDIVIDUAL -->
-        <label style="margin-top: 18px;">📌 PR yang Sedang Aktif:</label>
-        <div class="pr-active-list" id="prActiveList">
-            <div style="font-size: 0.85rem; color: #777; text-align: center;">Belum ada PR tersimpan</div>
-        </div>
+        <!-- Tombol Buka Panel PR -->
+        <button onclick="bukaModalPR()" class="btn-outline" style="color: #3ea6ff; border-color: #2d4a66; margin-top: 12px;">
+            📂 Lihat Daftar PR Tersimpan
+        </button>
     </div>
 
     <!-- Container Generate -->
@@ -375,16 +384,14 @@
             </label>
         </div>
 
-        <label>Info Tambahan Manual (Ketik):</label>
+        <label>Info Tambahan Manual (Maks. 5):</label>
         <div id="infoInputsContainer">
-            <div class="info-input-wrapper">
-                <input type="text" class="manual-info-input" placeholder="Tulis info manual 1...">
-            </div>
+            <!-- Input akan di-generate oleh JavaScript agar bisa menyesuaikan nomor otomatis -->
         </div>
-        <button type="button" class="btn-add-info" onclick="tambahInputInfo()">+ Tambah Info Manual</button>
+        <button type="button" class="btn-add-info" id="btnAddInfo" onclick="tambahInputInfo()">+ Tambah Info Manual</button>
         
         <button onclick="generateJadwal()">Buat Jadwal Besok</button>
-        <button onclick="konfirmasiHapusPR()" class="btn-danger">Hapus SEMUA Data PR</button>
+        <button onclick="konfirmasiHapusSemuaPR()" class="btn-delete-all">Hapus SEMUA Data PR</button>
         
         <div class="copy-area">
             <h3>📋 Halaman Hasil Jadwal</h3>
@@ -405,14 +412,25 @@
         <button onclick="importSyncKode()" class="btn-outline">Impor Data</button>
     </div>
 
-    <!-- WARNING MODAL -->
+    <!-- MODAL PANEL DAFTAR PR -->
+    <div class="modal-overlay" id="prModal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-title">📂 Daftar PR Tersimpan</div>
+            <div class="pr-active-list" id="prModalList">
+                <!-- List akan dirender oleh JS -->
+            </div>
+            <button class="btn-outline" onclick="tutupModalPR()">Tutup Panel</button>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMATION (Peringatan Hapus) -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
             <div class="modal-title" id="confirmTitle">Peringatan!</div>
             <div class="modal-desc" id="confirmDesc">Apakah Anda yakin ingin menghapus data ini?</div>
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="tutupModalPeringatan(false)">Batal</button>
-                <button class="btn-confirm" onclick="tutupModalPeringatan(true)">Ya</button>
+                <button class="btn-confirm" onclick="tutupModalPeringatan(true)">Ya, Hapus</button>
             </div>
         </div>
     </div>
@@ -444,7 +462,7 @@
             toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        /* CONFIRM MODAL */
+        /* CONFIRM MODAL (Popup Peringatan) */
         let pendingAction = null;
         function showConfirmModal(title, desc, onConfirm) {
             document.getElementById('confirmTitle').innerText = title;
@@ -458,28 +476,67 @@
             pendingAction = null;
         }
 
-        /* INPUT INFO DINAMIS */
-        let infoInputCount = 1;
+        /* MODAL PANEL PR */
+        function bukaModalPR() {
+            renderPRModal();
+            document.getElementById('prModal').classList.add('active');
+        }
+        function tutupModalPR() {
+            document.getElementById('prModal').classList.remove('active');
+        }
+
+        /* INFO TAMBAHAN DINAMIS (MAKS 5, OTOMATIS URUT) */
         function tambahInputInfo() {
-            infoInputCount++;
             const container = document.getElementById('infoInputsContainer');
+            
+            // Cek batas maksimal
+            if (container.children.length >= 5) {
+                showNotification("Batas Maksimal", "Hanya bisa menambahkan maksimal 5 info!");
+                return;
+            }
+            
             const wrapper = document.createElement('div');
             wrapper.className = 'info-input-wrapper';
             
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'manual-info-input';
-            input.placeholder = `Tulis info manual ${infoInputCount}...`;
             
             const btnRemove = document.createElement('button');
             btnRemove.type = 'button';
             btnRemove.className = 'btn-remove-info';
             btnRemove.innerText = '✕';
-            btnRemove.onclick = () => container.removeChild(wrapper);
+            
+            // Jika dihapus, otomatis perbarui urutan angka
+            btnRemove.onclick = () => {
+                container.removeChild(wrapper);
+                updateInfoPlaceholders();
+            };
 
             wrapper.appendChild(input);
             wrapper.appendChild(btnRemove);
             container.appendChild(wrapper);
+            
+            updateInfoPlaceholders();
+        }
+
+        function updateInfoPlaceholders() {
+            const container = document.getElementById('infoInputsContainer');
+            const wrappers = container.children;
+            
+            // Perbarui penomoran placeholder secara otomatis
+            for (let i = 0; i < wrappers.length; i++) {
+                const input = wrappers[i].querySelector('input');
+                input.placeholder = `Tulis info manual ${i + 1}...`;
+            }
+            
+            // Sembunyikan tombol jika sudah mencapai 5
+            const btnAdd = document.getElementById('btnAddInfo');
+            if (wrappers.length >= 5) {
+                btnAdd.style.display = 'none';
+            } else {
+                btnAdd.style.display = 'block';
+            }
         }
 
         /* DATABASE JADWAL */
@@ -490,40 +547,9 @@
             4: { hari: "Kamis", waktu: "06.30 – 12.10", seragam: "Batik", mapel: ["B. Sunda", "BTQ", "PJOK", "```Istirahat```", "PJOK", "IPA", "Informatika", "Informatika"] },
             5: { hari: "Jumat", waktu: "06.30 – 11.25", seragam: "Muslim", mapel: ["Matematika", "IPS", "B. Inggris", "```Istirahat```", "B. Indonesia", "B. Indonesia", "B. Indonesia"] }
         };
+        const aliasPR = { "Pendidikan Pancasila": "PP", "B. Indonesia": "B. Indo", "Matematika": "MTK" };
 
-        const aliasPR = {
-            "Pendidikan Pancasila": "PP",
-            "B. Indonesia": "B. Indo",
-            "Matematika": "MTK"
-        };
-
-        /* RENDER DAFTAR PR AKTIF */
-        function renderActivePR() {
-            const dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
-            const listContainer = document.getElementById('prActiveList');
-            const keys = Object.keys(dataPR);
-
-            if (keys.length === 0) {
-                listContainer.innerHTML = `<div style="font-size: 0.85rem; color: #777; text-align: center;">Belum ada PR tersimpan</div>`;
-                return;
-            }
-
-            let html = '';
-            keys.forEach(mapel => {
-                html += `
-                    <div class="pr-active-item">
-                        <div>
-                            <span class="pr-item-title">${mapel}:</span>
-                            <span class="pr-item-desc">${dataPR[mapel]}</span>
-                        </div>
-                        <button class="btn-del-single-pr" onclick="hapusSatuPR('${mapel}')">✕ Hapus</button>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
-        }
-
-        /* PR MANAGEMENT */
+        /* PR MANAGEMENT & RENDER MODAL PANEL */
         function simpanPR() {
             const isi = document.getElementById('isiPR').value.trim();
             if (!isi) {
@@ -535,29 +561,58 @@
             localStorage.setItem('dataPR', JSON.stringify(dataPR));
             
             updateSyncCode();
-            renderActivePR();
-            showNotification("Berhasil!", "PR untuk " + currentSelectedMapel + " berhasil dicatat.");
+            showNotification("Berhasil!", "PR " + currentSelectedMapel + " berhasil dicatat.");
             document.getElementById('isiPR').value = "";
         }
 
-        function hapusSatuPR(mapel) {
-            let dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
-            delete dataPR[mapel];
-            localStorage.setItem('dataPR', JSON.stringify(dataPR));
-            updateSyncCode();
-            renderActivePR();
-            showNotification("Dihapus", `PR ${mapel} berhasil dihapus.`);
+        function renderPRModal() {
+            const dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
+            const listContainer = document.getElementById('prModalList');
+            const keys = Object.keys(dataPR);
+
+            if (keys.length === 0) {
+                listContainer.innerHTML = `<div style="font-size: 0.9rem; color: #777; text-align: center; margin: 15px 0;">Belum ada PR yang tersimpan.</div>`;
+                return;
+            }
+
+            let html = '';
+            keys.forEach(mapel => {
+                html += `
+                    <div class="pr-active-item">
+                        <div style="flex-grow: 1; padding-right: 10px;">
+                            <span class="pr-item-title">${mapel}:</span>
+                            <span class="pr-item-desc">${dataPR[mapel]}</span>
+                        </div>
+                        <button class="btn-del-single-pr" onclick="konfirmasiHapusSatuPR('${mapel}')">✕ Hapus</button>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
         }
 
-        function konfirmasiHapusPR() {
+        function konfirmasiHapusSatuPR(mapel) {
             showConfirmModal(
-                "Konfirmasi Hapus Data",
+                "Hapus PR",
+                `Yakin ingin menghapus PR untuk mapel ${mapel}?`,
+                function() {
+                    let dataPR = JSON.parse(localStorage.getItem('dataPR')) || {};
+                    delete dataPR[mapel];
+                    localStorage.setItem('dataPR', JSON.stringify(dataPR));
+                    updateSyncCode();
+                    renderPRModal(); // Update tampilan di dalam panel modal
+                    showNotification("Dihapus", `PR ${mapel} berhasil dihapus.`);
+                }
+            );
+        }
+
+        function konfirmasiHapusSemuaPR() {
+            showConfirmModal(
+                "Konfirmasi Penghapusan",
                 "Apakah Anda yakin ingin menghapus SELURUH data PR tersimpan?",
                 function() {
                     localStorage.removeItem('dataPR');
                     updateSyncCode();
-                    renderActivePR();
-                    showNotification("Berhasil Dihapus!", "Semua data PR telah berhasil dibersihkan.");
+                    showNotification("Bersih!", "Semua data PR telah berhasil dihapus.");
                 }
             );
         }
@@ -567,37 +622,27 @@
             const dataStr = localStorage.getItem('dataPR');
             document.getElementById('syncKode').value = dataStr ? btoa(encodeURIComponent(dataStr)) : "";
         }
-        
         function copySyncKode() {
             const input = document.getElementById('syncKode');
-            if(!input.value) {
-                showNotification("Kosong", "Tidak ada data untuk disalin.");
-                return;
-            }
-            input.select();
-            document.execCommand('copy');
-            showNotification("Disalin!", "Kode transfer data berhasil disalin.");
+            if(!input.value) { showNotification("Kosong", "Tidak ada data untuk disalin."); return; }
+            input.select(); document.execCommand('copy');
+            showNotification("Disalin!", "Kode transfer berhasil disalin.");
         }
-
         function importSyncKode() {
             const kode = document.getElementById('inputSyncKode').value.trim();
-            if(!kode) {
-                showNotification("Gagal Impor", "Masukkan kode terlebih dahulu.");
-                return;
-            }
+            if(!kode) { showNotification("Gagal", "Masukkan kode terlebih dahulu."); return; }
             try {
                 const decodedData = decodeURIComponent(atob(kode));
                 localStorage.setItem('dataPR', decodedData);
                 updateSyncCode();
-                renderActivePR();
                 document.getElementById('inputSyncKode').value = "";
                 showNotification("Berhasil!", "Data PR berhasil diimpor.");
             } catch (e) {
-                showNotification("Error", "Kode yang dimasukkan salah atau korup.");
+                showNotification("Error", "Kode salah atau korup.");
             }
         }
 
-        /* LOGIKA WRAPTEXT */
+        /* LOGIKA WRAPTEXT SC1 */
         function wrapText(prefix, text) {
             const maxLen = 28;
             let fullText = prefix + text;
@@ -645,13 +690,12 @@
             let hariIndex = besok.getDay(); 
             
             if (hariIndex === 0 || hariIndex === 6) {
-                showNotification("Besok Libur", "Hari Sabtu dan Minggu tidak ada jadwal sekolah.");
+                showNotification("Besok Libur", "Hari Sabtu dan Minggu tidak ada jadwal.");
                 return;
             }
 
             const bulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             const formatTanggal = `${besok.getDate()} ${bulanIndo[besok.getMonth()]} ${besok.getFullYear()}`;
-            
             const dataJadwal = jadwalSekolah[hariIndex];
             
             let teks = `╭─────────────── ✰\n`;
@@ -667,7 +711,6 @@
                 if(m !== "```Istirahat```") mapelUnik.add(m);
             });
             
-            // PR Section
             teks += `├─────────────── ✰\n`;
             teks += `│ 📘 *PR*:\n`;
             let adaPR = false;
@@ -677,19 +720,14 @@
                     adaPR = true;
                     let namaSingkat = aliasPR[m] || m; 
                     teks += wrapText(namaSingkat + " ", dataPR[m]) + "\n";
-                    
-                    // OTOMATIS HAPUS PR MAPEL BESOK SETELAH DIGENERATE
-                    delete dataPR[m];
+                    delete dataPR[m]; // Auto hapus memori PR besok 
                 }
             });
             if (!adaPR) teks += `│ • –\n`;
 
-            // Simpan pembaruan data PR setelah auto-clear
             localStorage.setItem('dataPR', JSON.stringify(dataPR));
             updateSyncCode();
-            renderActivePR();
 
-            // Info Section
             teks += `├─────────────── ✰\n`;
             teks += `│ 💭 *Info*:\n`;
             if (listInfo.length > 0) {
@@ -705,21 +743,18 @@
             showNotification("Jadwal Siap!", "Jadwal digenerate & PR besok otomatis terarsip.");
         }
 
-        /* COPY FUNCTION */
         function copyKeClipboard() {
             const hasil = document.getElementById('hasilJadwal');
-            if(!hasil.value) {
-                showNotification("Gagal", "Buat jadwal terlebih dahulu!");
-                return;
-            }
-            hasil.select();
-            document.execCommand('copy');
-            showNotification("Disalin!", "Teks jadwal berhasil disalin ke clipboard.");
+            if(!hasil.value) { showNotification("Kosong", "Buat jadwal terlebih dahulu!"); return; }
+            hasil.select(); document.execCommand('copy');
+            showNotification("Disalin!", "Jadwal berhasil disalin ke clipboard.");
         }
 
-        // Initial setup
-        updateSyncCode();
-        renderActivePR();
+        // Jalankan saat web dimuat pertama kali
+        window.addEventListener('DOMContentLoaded', () => {
+            tambahInputInfo(); // Memunculkan 1 input kosong pertama
+            updateSyncCode();
+        });
     </script>
 </body>
 </html>
