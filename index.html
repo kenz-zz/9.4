@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal & PR Generator</title>
+    <title>Jadwal 9.4 Generator</title>
     <style>
-        /* Base Styling - KidsTube Dark Mode Style (sc2) */
         * {
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -205,7 +204,7 @@
         }
         textarea#hasilJadwal {
             height: 450px;
-            font-family: monospace; /* Monospace khas sc1 */
+            font-family: monospace; /* Monospace khas sc1 agar layout rapi */
             white-space: pre;
             background-color: #121212;
             border: none;
@@ -344,19 +343,24 @@
     <div class="container">
         <h2>⚙️ Persiapan Jadwal Besok</h2>
         
+        <!-- Diperbaiki: 4 Checklist dikembalikan sesuai SC1 -->
         <label>Template Info Cepat (Pilih >1):</label>
         <div class="info-checkbox-group">
             <label class="checkbox-container">
                 <input type="checkbox" value="Besok upacara! datang lebih awal.">
-                <span>1. Upacara (Datang lebih awal)</span>
+                <span>1. Info Upacara</span>
             </label>
             <label class="checkbox-container">
-                <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan sholat, dan infak seikhlasnya.||Mengingatkan kembali bahwa pelajaran SBK memerlukan penggaris.">
-                <span>2. Tasaqur & perlengkapan SBK (Penggaris)</span>
+                <input type="checkbox" value="Besok kokurikuler Tasaqur di lapangan! datang lebih awal, membawa perlengkapan sholat, dan infak seikhlas- nya.">
+                <span>2. Info Tasaqur</span>
+            </label>
+            <label class="checkbox-container">
+                <input type="checkbox" value="Mengingatkan kembali bahwa pelajaran SBK memerlukan penggaris.">
+                <span>3. Info SBK Penggaris</span>
             </label>
             <label class="checkbox-container">
                 <input type="checkbox" value="Besok kokurikuler senam di lapangan! datang lebih awal.">
-                <span>3. Senam di lapangan</span>
+                <span>4. Info Senam</span>
             </label>
         </div>
 
@@ -566,50 +570,33 @@
 
         updateSyncCode();
 
-        /* WORD WRAPPING LOGIC DENGAN TANDA HUBUNG (-) */
-        function wrapTextWithHyphen(prefix, text, maxLen = 26) {
-            let words = text.split(' ');
+        /* KEMBALI MENGGUNAKAN LOGIKA WRAPTEXT SC1 YANG 100% RAPI */
+        function wrapText(prefix, text) {
+            const maxLen = 28; // Diset 28 agar spasi template info (Tasaqur) turun presisi seperti SC1
+            let fullText = prefix + text;
+            const words = fullText.split(' ');
             let lines = [];
             let currentLine = '';
 
-            for (let i = 0; i < words.length; i++) {
-                let word = words[i];
-                
-                if ((currentLine ? currentLine + ' ' : '') + word.length <= maxLen) {
-                    currentLine = currentLine ? currentLine + ' ' + word : word;
+            for (let word of words) {
+                if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLen) {
+                    if (currentLine) lines.push(currentLine);
+                    currentLine = word;
                 } else {
-                    let spaceLeft = maxLen - (currentLine ? currentLine.length + 1 : 0);
-                    
-                    if (spaceLeft >= 4 && word.length > spaceLeft && word.length > 4) {
-                        let part1 = word.slice(0, spaceLeft - 1) + '-';
-                        let part2 = word.slice(spaceLeft - 1);
-                        
-                        currentLine = currentLine ? currentLine + ' ' + part1 : part1;
-                        lines.push(currentLine);
-                        currentLine = part2;
-                    } else {
-                        if (currentLine) lines.push(currentLine);
-                        
-                        while (word.length > maxLen) {
-                            let part1 = word.slice(0, maxLen - 1) + '-';
-                            word = word.slice(maxLen - 1);
-                            lines.push(part1);
-                        }
-                        currentLine = word;
-                    }
+                    currentLine = currentLine ? currentLine + ' ' + word : word;
                 }
             }
             if (currentLine) lines.push(currentLine);
 
             let result = '';
-            for (let k = 0; k < lines.length; k++) {
-                if (k === 0) {
-                    result += `│ • ${prefix}${lines[k]}\n`;
+            for (let i = 0; i < lines.length; i++) {
+                if (i === 0) {
+                    result += `│ • ${lines[i]}\n`;
                 } else {
-                    result += `│    ${lines[k]}\n`;
+                    result += `│    ${lines[i]}\n`;
                 }
             }
-            return result.trimRight();
+            return result.trimRight(); 
         }
 
         /* GENERATE JADWAL */
@@ -620,13 +607,7 @@
             
             // Ambil dari Checkbox Template
             document.querySelectorAll('.info-checkbox-group input:checked').forEach((cb) => {
-                let val = cb.value;
-                if (val.includes('||')) {
-                    let subInfos = val.split('||');
-                    subInfos.forEach(s => listInfo.push(s));
-                } else {
-                    listInfo.push(val);
-                }
+                listInfo.push(cb.value);
             });
             
             // Ambil dari semua Input Manual Dinamis
@@ -672,7 +653,7 @@
                 if (dataPR[m]) {
                     adaPR = true;
                     let namaSingkat = aliasPR[m] || m; 
-                    teks += wrapTextWithHyphen(namaSingkat + " ", dataPR[m]) + "\n";
+                    teks += wrapText(namaSingkat + " ", dataPR[m]) + "\n";
                 }
             });
             if (!adaPR) teks += `│ • –\n`;
@@ -682,7 +663,7 @@
             teks += `│ 💭 *Info*:\n`;
             if (listInfo.length > 0) {
                 listInfo.forEach(infoStr => {
-                    teks += wrapTextWithHyphen("", infoStr) + "\n";
+                    teks += wrapText("", infoStr) + "\n";
                 });
             } else {
                 teks += `│ • –\n`;
